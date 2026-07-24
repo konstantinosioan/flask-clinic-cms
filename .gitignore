@@ -1,0 +1,9 @@
+*.db
+static/uploads/
+.env
+__pycache__/
+*.pyc
+venv/
+.venv/
+instance/
+flask_session/
