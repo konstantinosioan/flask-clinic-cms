@@ -1,0 +1,52 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <h1>[Clinic Name]</h1>
+    <h2>[Welcome Message]</h2>
+
+    <section id="doctors">
+        <div class="row justify-content-center">
+            {% for doctor in doctors %}
+                <div class="col-12 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title">{{ doctor.name }}</h3>
+                            <img class="img-fluid" src="{{ doctor.photo_filename or url_for('static', filename='placeholder.png') }}" alt="{{ doctor.name }}">
+                            <p>Ειδικότητα: {{ doctor.role }}</p>
+                            <p> {{ doctor.bio }} </p>
+                            <p>Email: {{ doctor.email }}</p>
+                            <p>Τηλέφωνο: {{ doctor.phone }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="gallery">
+        <div class="row justify-content-center">
+            {% for item in gallery %}
+                <div class="col-12 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <figure>
+                                <img class="img-fluid" src="{{ item.image_filename or url_for('static', filename='placeholder.png')}}" alt="">
+                                <figcaption>{{ item.caption }}</figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="contact">
+        <h3>Επικοινωνία</h3>
+        <p>Διεύθυνση: [Clinic Address]</p>
+        <p>Email: {{ clinic_info.email }}</p>
+        <p>Τηλέφωνο Επικοινωνίας: {{ clinic_info.phone }}</p>
+        <div class="ratio ratio-16x9">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d52175.547594871416!2d33.36433388085512!3d35.18225727708076!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14de1767ca494d55%3A0x5b5ea49c0311c0a5!2sNicosia!5e0!3m2!1sen!2s!4v1784934633847!5m2!1sen!2s" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+    </section>
+{% endblock %}
