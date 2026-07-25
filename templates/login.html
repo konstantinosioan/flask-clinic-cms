@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Σύνδεση
+{% endblock %}
+
+{% block body %}
+    <div class="col-12 col-md-6 mx-auto">
+        <form action="/admin/login" method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label">Όνομα χρήστη</label>
+                <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Όνομα χρήστη" type="text">
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Κωδικός</label>
+                <input autocomplete="current-password" class="form-control" name="password" placeholder="Ο κωδικός σας" type="password">
+            </div>
+            <button class="btn btn-primary" type="submit">Σύνδεση</button>
+        </form>
+    </div>
+{% endblock %}
