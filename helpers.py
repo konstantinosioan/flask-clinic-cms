@@ -1,7 +1,10 @@
 import sqlite3
+import secrets
+import os
 
 from flask import g, redirect, session, request, url_for, abort
 from functools import wraps
+from PIL import Image
 
 def get_db():
     if "db" not in g:
@@ -77,3 +80,55 @@ def truncate_words(text, count=7):
         return text
 
     return " ".join(words[:count]) + "..."
+
+
+def valid_image(file):
+    image = open_image(file)
+
+    return False if image is None else image.format in ('JPEG', 'PNG', 'WEBP')
+
+
+def save_image(file):
+    if not valid_image(file):
+        return None
+
+    file.seek(0)
+    image = Image.open(file)
+
+    extension = map_extension(image.format)
+    filename = f"{secrets.token_hex(12)}.{extension}"
+    path = os.path.join('static', 'uploads', filename)
+
+    image.save(path, format=image.format)
+
+    return filename
+
+
+def map_extension(image_format):
+    return 'jpg' if image_format == 'JPEG' else image_format.lower()
+
+
+def delete_photo(filename):
+    if not filename:
+        return
+
+    try:
+        os.remove(os.path.join('static', 'uploads', filename))
+    except OSError:
+        pass
+
+
+MAX_IMAGE_PIXELS = 50_000_000
+
+
+def open_image(file):
+    try:
+        image = Image.open(file)
+        image.verify()
+    except Exception:
+        return None
+
+    if image.width * image.height > MAX_IMAGE_PIXELS:
+        return None
+
+    return image

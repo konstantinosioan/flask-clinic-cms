@@ -1,3 +1,14 @@
 html {
     scroll-behavior: smooth;
 }
+
+.photo-contain {
+    object-fit: contain;
+}
+
+.thumbnail-cover {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+}
+

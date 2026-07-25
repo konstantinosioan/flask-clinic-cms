@@ -19,13 +19,13 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="#doctors">Ιατροί</a>
+                            <a class="nav-link" href="{{ url_for('index', _anchor='doctors') }}">Ιατροί</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#gallery">Φωτογραφίες</a>
+                            <a class="nav-link" href="{{ url_for('index', _anchor='gallery') }}">Φωτογραφίες</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#contact">Επικοινωνία</a>
+                            <a class="nav-link" href="{{ url_for('index', _anchor='contact') }}">Επικοινωνία</a>
                         </li>
                         {% if session.get("admin_id") %}
                             <li class="nav-item">

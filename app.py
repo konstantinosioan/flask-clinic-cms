@@ -1,14 +1,15 @@
 import os
-from datetime import timedelta
 
+from datetime import timedelta
 from flask import Flask, render_template, g, redirect, flash, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import get_db, login_required, valid_password, get_doctor_form_data, get_doctor_or_404, get_gallery_item_or_404, truncate_words
+from helpers import get_db, login_required, valid_password, get_doctor_form_data, get_doctor_or_404, get_gallery_item_or_404, truncate_words, save_image, delete_photo
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=30)
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 app.jinja_env.filters["truncate_words"] = truncate_words
 
 @app.route("/")
@@ -119,10 +120,17 @@ def add_doctor():
         if not all(data.values()):
             flash("Παρακαλώ συμπληρώστε και τα 5 πεδία.", "danger")
             return render_template("doctor_form.html", values=data)
+        
+        photo = request.files["photo"]
+        photo_filename = save_image(photo)
+
+        if photo.filename and not photo_filename:
+            flash("Το αρχείο φωτογραφίας δεν είναι έγκυρη εικόνα.", "danger")
+            return render_template("doctor_form.html", values=data)
 
         db = get_db()
-        db.execute("INSERT INTO doctors (name, role, bio, email, phone) VALUES(?, ?, ?, ?, ?)",
-                   (data["name"], data["role"], data["bio"], data["email"], data["phone"]))
+        db.execute("INSERT INTO doctors (name, role, bio, email, phone, photo_filename) VALUES(?, ?, ?, ?, ?, ?)",
+                   (data["name"], data["role"], data["bio"], data["email"], data["phone"], photo_filename))
         db.commit()
 
         flash("Ο ιατρός προστέθηκε επιτυχώς.", "success")
@@ -136,6 +144,7 @@ def add_doctor():
 @login_required
 def edit_doctor(id):
     db = get_db()
+    doctor = get_doctor_or_404(db, id)
 
     if request.method == "POST":
         data = get_doctor_form_data()
@@ -143,17 +152,22 @@ def edit_doctor(id):
         if not all(data.values()):
             flash("Παρακαλώ συμπληρώστε και τα 5 πεδία.", "danger")
             return render_template("doctor_form.html", values=data, doctor_id=id)
+        
+        photo = request.files["photo"]
+        photo_filename = save_image(photo) if photo.filename else doctor["photo_filename"]
 
-        db.execute("UPDATE doctors SET name = ?, role = ?, bio = ?, email = ?, phone = ? WHERE id = ?",
-                   (data["name"], data["role"], data["bio"], data["email"], data["phone"], id))
+        if photo.filename and not photo_filename:
+            flash("Το αρχείο φωτογραφίας δεν είναι έγκυρη εικόνα.", "danger")
+            return render_template("doctor_form.html", values=data, doctor_id=id)
+
+        db.execute("UPDATE doctors SET name = ?, role = ?, bio = ?, email = ?, phone = ?, photo_filename = ? WHERE id = ?",
+                   (data["name"], data["role"], data["bio"], data["email"], data["phone"], photo_filename, id))
         db.commit()
 
         flash("Τα στοιχεία του ιατρού ενημερώθηκαν επιτυχώς.", "success")
 
         return redirect(url_for("admin"))
     else:
-        doctor = get_doctor_or_404(db, id)
-
         return render_template("doctor_form.html", values=doctor, doctor_id=id)
 
 
@@ -161,17 +175,18 @@ def edit_doctor(id):
 @login_required
 def delete_doctor(id):
     db = get_db()
+    doctor = get_doctor_or_404(db, id)
     
     if request.method == "POST":
+        delete_photo(doctor["photo_filename"])
+        
         db.execute("DELETE FROM doctors WHERE id = ?", (id,))
         db.commit()
         
         flash("Ο ιατρός διαγράφηκε επιτυχώς.", "success")
 
         return redirect(url_for("admin"))
-    else:
-        doctor = get_doctor_or_404(db, id)
-        
+    else:        
         return render_template("delete_confirm.html", doctor=doctor)
 
 
@@ -180,9 +195,15 @@ def delete_doctor(id):
 def add_gallery_item():
     if request.method == "POST":
         caption = request.form.get("caption")
+        image = request.files["image"]
+        image_filename = save_image(image)
+        
+        if not image_filename:
+            flash("Παρακαλώ ανεβάστε μια έγκυρη φωτογραφία.", "danger")
+            return render_template("gallery_form.html", values={"caption": caption})
 
         db = get_db()
-        db.execute("INSERT INTO gallery (caption) VALUES(?)", (caption, ))
+        db.execute("INSERT INTO gallery (image_filename, caption) VALUES(?, ?)", (image_filename, caption))
         db.commit()
 
         flash("Η φωτογραφία προστέθηκε επιτυχώς.", "success")
@@ -196,19 +217,24 @@ def add_gallery_item():
 @login_required
 def edit_gallery_item(id):
     db = get_db()
+    gallery_item = get_gallery_item_or_404(db, id)
 
     if request.method == "POST":
         caption = request.form.get("caption")
+        image = request.files["image"]
+        image_filename = save_image(image) if image.filename else gallery_item["image_filename"]
+        
+        if image.filename and not image_filename:
+            flash("Το αρχείο φωτογραφίας δεν είναι έγκυρη εικόνα.", "danger")
+            return render_template("gallery_form.html", values={"caption": caption}, gallery_id=id)
 
-        db.execute("UPDATE gallery SET caption = ? WHERE id = ?", (caption, id))
+        db.execute("UPDATE gallery SET image_filename = ?, caption = ? WHERE id = ?", (image_filename, caption, id))
         db.commit()
 
         flash("Η φωτογραφία ενημερώθηκε επιτυχώς.", "success")
 
         return redirect(url_for("admin"))
     else:
-        gallery_item = get_gallery_item_or_404(db, id)
-
         return render_template("gallery_form.html", values=gallery_item, gallery_id=id)
 
 
@@ -216,6 +242,10 @@ def edit_gallery_item(id):
 @login_required
 def delete_gallery_item(id):
     db = get_db()
+    gallery_item = get_gallery_item_or_404(db, id)
+        
+    delete_photo(gallery_item["image_filename"])
+    
     db.execute("DELETE FROM gallery WHERE id = ?", (id,))
     db.commit()
     

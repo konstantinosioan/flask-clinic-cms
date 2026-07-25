@@ -10,7 +10,7 @@ CREATE TABLE doctors (
 
 CREATE TABLE gallery (
     id INTEGER PRIMARY KEY,
-    image_filename TEXT,
+    image_filename TEXT NOT NULL,
     caption TEXT
 );
 
