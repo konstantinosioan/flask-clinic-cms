@@ -15,7 +15,9 @@
                     <div class="card">
                         <div class="card-body">
                             <h3 class="card-title">{{ doctor.name }}</h3>
-                            <img class="img-fluid" src="{{ doctor.photo_filename or url_for('static', filename='placeholder.png') }}" alt="{{ doctor.name }}">
+                            {% if doctor.photo_filename %}
+                                <img class="img-fluid" src="{{ doctor.photo_filename }}" alt="{{ doctor.name }}">
+                            {% endif %}
                             <p>Ειδικότητα: {{ doctor.role }}</p>
                             <p>{{ doctor.bio }}</p>
                             <p>Email: {{ doctor.email }}</p>
@@ -34,7 +36,7 @@
                     <div class="card">
                         <div class="card-body">
                             <figure>
-                                <img class="img-fluid" src="{{ item.image_filename or url_for('static', filename='placeholder.png')}}" alt="">
+                                <img class="img-fluid" src="{{ item.image_filename or url_for('static', filename='placeholder.svg') }}" alt="">
                                 <figcaption>{{ item.caption }}</figcaption>
                             </figure>
                         </div>

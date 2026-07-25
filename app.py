@@ -4,11 +4,12 @@ from datetime import timedelta
 from flask import Flask, render_template, g, redirect, flash, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from helpers import get_db, login_required, valid_password, get_doctor_form_data, get_doctor_or_404
+from helpers import get_db, login_required, valid_password, get_doctor_form_data, get_doctor_or_404, get_gallery_item_or_404, truncate_words
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=30)
+app.jinja_env.filters["truncate_words"] = truncate_words
 
 @app.route("/")
 def index():
@@ -27,8 +28,9 @@ def admin():
     db = get_db()
 
     doctors = db.execute("SELECT * FROM doctors").fetchall()
+    gallery_items = db.execute("SELECT * FROM gallery").fetchall()
 
-    return render_template("dashboard.html", doctors=doctors)
+    return render_template("dashboard.html", doctors=doctors, gallery_items=gallery_items)
 
 
 @app.route("/admin/login", methods=["GET", "POST"])
@@ -171,6 +173,55 @@ def delete_doctor(id):
         doctor = get_doctor_or_404(db, id)
         
         return render_template("delete_confirm.html", doctor=doctor)
+
+
+@app.route("/admin/gallery/new", methods=["GET", "POST"])
+@login_required
+def add_gallery_item():
+    if request.method == "POST":
+        caption = request.form.get("caption")
+
+        db = get_db()
+        db.execute("INSERT INTO gallery (caption) VALUES(?)", (caption, ))
+        db.commit()
+
+        flash("Η φωτογραφία προστέθηκε επιτυχώς.", "success")
+
+        return redirect(url_for("admin"))
+    else:
+        return render_template("gallery_form.html")
+
+
+@app.route("/admin/gallery/<int:id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_gallery_item(id):
+    db = get_db()
+
+    if request.method == "POST":
+        caption = request.form.get("caption")
+
+        db.execute("UPDATE gallery SET caption = ? WHERE id = ?", (caption, id))
+        db.commit()
+
+        flash("Η φωτογραφία ενημερώθηκε επιτυχώς.", "success")
+
+        return redirect(url_for("admin"))
+    else:
+        gallery_item = get_gallery_item_or_404(db, id)
+
+        return render_template("gallery_form.html", values=gallery_item, gallery_id=id)
+
+
+@app.route("/admin/gallery/<int:id>/delete", methods=["POST"])
+@login_required
+def delete_gallery_item(id):
+    db = get_db()
+    db.execute("DELETE FROM gallery WHERE id = ?", (id,))
+    db.commit()
+    
+    flash("Η φωτογραφία διαγράφηκε επιτυχώς.", "success")
+
+    return redirect(url_for("admin"))
 
 
 @app.teardown_appcontext

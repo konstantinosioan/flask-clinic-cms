@@ -56,3 +56,24 @@ def get_doctor_or_404(db, id):
         abort(404)
         
     return doctor
+
+
+def get_gallery_item_or_404(db, id):
+    item = db.execute("SELECT * FROM gallery WHERE id = ?", (id,)).fetchone()
+
+    if not item:
+        abort(404)
+
+    return item
+
+
+def truncate_words(text, count=7):
+    if not text:
+        return text
+
+    words = text.split()
+
+    if len(words) <= count:
+        return text
+
+    return " ".join(words[:count]) + "..."

@@ -24,4 +24,27 @@
             </li>
         {% endfor %}
     </ul>
+
+    <a href="{{ url_for('add_gallery_item') }}" class="btn btn-primary mt-3">Πρόσθεσε Φωτογραφία</a>
+
+    <ul class="list-group mt-3">
+        {% for gallery_item in gallery_items %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <img class="img-fluid" style="width: 60px; height: 60px; object-fit: cover;" src="{{ gallery_item.image_filename or url_for('static', filename='placeholder.svg') }}" alt="">
+                    <span>{{ gallery_item.caption | truncate_words }}</span>
+                </div>
+                <div>
+                    <a href="{{ url_for('edit_gallery_item', id=gallery_item.id) }}" class="btn btn-secondary btn-sm">Επεξεργασία</a>
+                    <form class="confirm-delete d-inline" action="{{ url_for('delete_gallery_item', id=gallery_item.id) }}" method="post">
+                        <button type="submit" class="btn btn-danger btn-sm">Διαγραφή</button>
+                    </form>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}
