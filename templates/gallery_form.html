@@ -12,10 +12,17 @@
                 <textarea name="caption" id="caption" class="form-control" rows="3" placeholder="π.χ. Η αίθουσα αναμονής μας">{{ values.caption if values else '' }}</textarea>
             </div>
             <div class="mb-3">
+                <img id="image-preview" class="d-none img-fluid">
+            </div>
+            <div class="mb-3">
                 <label for="image" class="form-label">Φωτογραφία</label>
-                <input name="image" id="image" type="file" class="form-control" accept=".jpg, .jpeg, .png, .webp">
+                <input name="image" id="image" type="file" class="form-control photo-input" accept=".jpg, .jpeg, .png, .webp">
             </div>
             <button type="submit" class="btn btn-primary">{{ "Αποθήκευση" if gallery_id else "Προσθήκη" }}</button>
         </form>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}

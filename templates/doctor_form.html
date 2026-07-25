@@ -28,10 +28,17 @@
                 <input name="phone" id="phone" type="text" class="form-control" placeholder="π.χ. 99123456" value="{{ values.phone if values else '' }}">
             </div>
             <div class="mb-3">
+                <img id="photo-preview" class="d-none img-fluid">
+            </div>
+            <div class="mb-3">
                 <label for="photo" class="form-label">Φωτογραφία</label>
-                <input name="photo" id="photo" type="file" class="form-control" accept=".jpg, .jpeg, .png, .webp">
+                <input name="photo" id="photo" type="file" class="form-control photo-input" accept=".jpg, .jpeg, .png, .webp">
             </div>
             <button type="submit" class="btn btn-primary">{{ "Αποθήκευση" if doctor_id else "Προσθήκη" }}</button>
         </form>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}
