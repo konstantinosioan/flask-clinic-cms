@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Επιβεβαίωση Διαγραφής
+{% endblock %}
+
+{% block body %}
+    <div class="col-12 col-md-6 mx-auto text-center">
+        <p>Θέλετε σίγουρα να διαγράψετε τον/την Δρ. {{ doctor.name }};</p>
+        <form action="{{ url_for('delete_doctor', id=doctor.id) }}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-danger">Διαγραφή</button>
+        </form>
+        <a href="{{ url_for('admin') }}" class="btn btn-secondary">Ακύρωση</a>
+    </div>
+{% endblock %}

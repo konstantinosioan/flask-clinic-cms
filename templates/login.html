@@ -6,7 +6,7 @@
 
 {% block body %}
     <div class="col-12 col-md-6 mx-auto">
-        <form action="/admin/login" method="post">
+        <form action="{{ url_for('admin_login') }}" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">Όνομα χρήστη</label>
                 <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Όνομα χρήστη" type="text">

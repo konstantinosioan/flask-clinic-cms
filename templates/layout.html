@@ -12,7 +12,7 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
-                <a class="navbar-brand" href="/">Όνομα Κλινικής</a>
+                <a class="navbar-brand" href="{{ url_for('index') }}">Όνομα Κλινικής</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -27,6 +27,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="#contact">Επικοινωνία</a>
                         </li>
+                        {% if session.get("admin_id") %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin') }}">Πίνακας Ελέγχου</a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
@@ -48,7 +53,7 @@
         </main>
 
         <footer class="text-center text-muted small my-4">
-            <a href="/admin/login">Σύνδεση Διαχειριστή</a>
+            <a href="{{ url_for('admin_login') }}">Σύνδεση Διαχειριστή</a>
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
