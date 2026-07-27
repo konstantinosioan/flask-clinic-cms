@@ -37,6 +37,12 @@
                         <label for="photo" class="form-label">Φωτογραφία</label>
                         <input name="photo" id="photo" type="file" class="form-control photo-input" accept=".jpg, .jpeg, .png, .webp, .heic, .heif">
                     </div>
+                    {% if doctor_id and values.photo_filename %}
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" name="remove_photo" id="remove_photo">
+                            <label class="form-check-label" for="remove_photo">Αφαίρεση φωτογραφίας</label>
+                        </div>
+                    {% endif %}
                     <button type="submit" class="btn btn-primary w-100">{{ "Αποθήκευση" if doctor_id else "Προσθήκη" }}</button>
                 </form>
             </div>

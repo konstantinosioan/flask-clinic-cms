@@ -175,11 +175,15 @@ def save_image(file):
     return filename
 
 
-def process_photo_upload(field_name, existing_filename=None):
-    """Save a newly uploaded photo, deleting the replaced one, or keep the existing one if no new file was chosen"""
+def process_photo_upload(field_name, existing_filename=None, remove_existing=False):
+    """Save a newly uploaded photo, remove the existing one if requested, or keep it unchanged"""
     file = request.files[field_name]
 
     if not file.filename:
+        if remove_existing:
+            delete_photo(existing_filename)
+            return None, False
+
         return existing_filename, False
 
     filename = save_image(file)

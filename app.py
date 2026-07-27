@@ -224,8 +224,9 @@ def edit_doctor(doctor_id):
             flash("Παρακαλώ συμπληρώστε και τα 5 πεδία.", "danger")
             return render_template("doctor_form.html", values=data, doctor_id=doctor_id)
 
+        remove_photo = bool(request.form.get("remove_photo"))
         photo_filename, invalid = process_photo_upload(
-            "photo", doctor["photo_filename"]
+            "photo", doctor["photo_filename"], remove_existing=remove_photo
         )
 
         if invalid:
