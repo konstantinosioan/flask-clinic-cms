@@ -68,6 +68,26 @@ def test_invalid_image_oversized():
     assert not valid_image(buffer)
 
 
+def test_heic_is_valid():
+    buffer = make_image_bytes(format="HEIF")
+    assert valid_image(buffer)
+
+
+def test_heic_saved_as_jpg():
+    buffer = make_image_bytes(format="HEIF")
+    filename = save_image(buffer)
+
+    assert filename.endswith(".jpg")
+
+    path = os.path.join("static", "uploads", filename)
+    file = Image.open(path)
+
+    try:
+        assert file.format == "JPEG"
+    finally:
+        os.remove(path)
+
+
 def test_exif_metadata_stripped():
     image = Image.new("RGB", (10, 10))
     exif = image.getexif()

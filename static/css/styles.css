@@ -2,6 +2,76 @@ html {
     scroll-behavior: smooth;
 }
 
+@keyframes slide-in-left {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.slide-in {
+    animation: slide-in-left 0.8s ease-out;
+}
+
+@keyframes pop-in {
+    from {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.pop-in {
+    animation: pop-in 0.8s ease-out;
+}
+
+.reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .slide-in, .pop-in {
+        animation: none;
+    }
+
+    .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+.clinic-logo {
+    display: block;
+    width: 200px;
+    max-width: 100%;
+    margin: 1rem auto 0;
+}
+
+@media (min-width: 768px) {
+    .clinic-logo {
+        position: absolute;
+        width: 400px;
+        top: 6.5rem;
+        right: 1rem;
+        margin: 0;
+    }
+}
+
 .card {
     transition: box-shadow 0.2s ease-in-out;
 }
@@ -12,6 +82,10 @@ html {
 
 .doctor-photo {
     width: 220px;
+}
+
+.gallery-item {
+    margin-bottom: 4rem;
 }
 
 .gallery-photo {
@@ -26,7 +100,62 @@ html {
     object-fit: cover;
 }
 
-.navbar-brand, #doctors h2, #gallery h2, #contact h2 {
+.navbar-brand, #doctors h2, #gallery h2, #contact h2, #announcements h2, #services h2 {
     color: #2a6f6f;
+}
+
+.announcement-item .card {
+    border-left-color: #2a6f6f;
+}
+
+#services .card {
+    transition: box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+#services .card:hover {
+    background-color: #f0f0f0;
+}
+
+#services summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+#services summary::-webkit-details-marker {
+    display: none;
+}
+
+.service-col {
+    position: relative;
+}
+
+.service-col:has(details[open]) {
+    z-index: 20;
+}
+
+.service-details {
+    position: relative;
+}
+
+.service-popup {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    margin-top: 0.25rem;
+}
+
+.service-close {
+    display: none;
+    position: absolute;
+    top: 0.25rem;
+    right: 0.5rem;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.service-details[open] .service-close {
+    display: inline;
 }
 

@@ -11,6 +11,10 @@ from helpers import (
     get_doctor_form_data,
     get_doctor_or_404,
     get_gallery_item_or_404,
+    get_announcement_form_data,
+    get_announcement_or_404,
+    get_service_form_data,
+    get_service_or_404,
     truncate_words,
     save_image,
     delete_photo,
@@ -18,10 +22,17 @@ from helpers import (
     normalize_url,
 )
 
+# Configure application
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
+
+# Auto-logout the admin after 30 minutes of inactivity
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=30)
+
+# Ensures that uploaded photos are 5MB size capped
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
+
+# Custom filter
 app.jinja_env.filters["truncate_words"] = truncate_words
 
 
@@ -32,9 +43,18 @@ def index():
     doctors = db.execute("SELECT * FROM doctors ORDER BY id").fetchall()
     gallery = db.execute("SELECT * FROM gallery").fetchall()
     clinic_info = db.execute("SELECT * FROM clinic_info").fetchone()
+    announcements = db.execute(
+        "SELECT * FROM announcements ORDER BY created_at DESC, id DESC"
+    ).fetchall()
+    services = db.execute("SELECT * FROM services ORDER BY id").fetchall()
 
     return render_template(
-        "index.html", doctors=doctors, gallery=gallery, clinic_info=clinic_info
+        "index.html",
+        doctors=doctors,
+        gallery=gallery,
+        clinic_info=clinic_info,
+        announcements=announcements,
+        services=services,
     )
 
 
@@ -45,9 +65,17 @@ def admin():
 
     doctors = db.execute("SELECT * FROM doctors ORDER BY id").fetchall()
     gallery_items = db.execute("SELECT * FROM gallery").fetchall()
+    announcements = db.execute(
+        "SELECT * FROM announcements ORDER BY created_at DESC, id DESC"
+    ).fetchall()
+    services = db.execute("SELECT * FROM services ORDER BY id").fetchall()
 
     return render_template(
-        "dashboard.html", doctors=doctors, gallery_items=gallery_items
+        "dashboard.html",
+        doctors=doctors,
+        gallery_items=gallery_items,
+        announcements=announcements,
+        services=services,
     )
 
 
@@ -305,6 +333,140 @@ def delete_gallery_item(gallery_id):
     return redirect(url_for("admin"))
 
 
+@app.route("/admin/announcements/new", methods=["GET", "POST"])
+@login_required
+def add_announcement():
+    if request.method == "POST":
+        data = get_announcement_form_data()
+
+        if not all(data.values()):
+            flash("Παρακαλώ συμπληρώστε και τα 2 πεδία.", "danger")
+            return render_template("announcement_form.html", values=data)
+
+        db = get_db()
+        db.execute(
+            "INSERT INTO announcements (title, body) VALUES(?, ?)",
+            (data["title"], data["body"]),
+        )
+        db.commit()
+
+        flash("Η ανακοίνωση προστέθηκε επιτυχώς.", "success")
+
+        return redirect(url_for("admin"))
+
+    return render_template("announcement_form.html")
+
+
+@app.route("/admin/announcements/<int:announcement_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_announcement(announcement_id):
+    db = get_db()
+    announcement = get_announcement_or_404(db, announcement_id)
+
+    if request.method == "POST":
+        data = get_announcement_form_data()
+
+        if not all(data.values()):
+            flash("Παρακαλώ συμπληρώστε και τα 2 πεδία.", "danger")
+            return render_template(
+                "announcement_form.html", values=data, announcement_id=announcement_id
+            )
+
+        db.execute(
+            "UPDATE announcements SET title = ?, body = ? WHERE id = ?",
+            (data["title"], data["body"], announcement_id),
+        )
+        db.commit()
+
+        flash("Η ανακοίνωση ενημερώθηκε επιτυχώς.", "success")
+
+        return redirect(url_for("admin"))
+
+    return render_template(
+        "announcement_form.html", values=announcement, announcement_id=announcement_id
+    )
+
+
+@app.route("/admin/announcements/<int:announcement_id>/delete", methods=["POST"])
+@login_required
+def delete_announcement(announcement_id):
+    db = get_db()
+    get_announcement_or_404(db, announcement_id)
+
+    db.execute("DELETE FROM announcements WHERE id = ?", (announcement_id,))
+    db.commit()
+
+    flash("Η ανακοίνωση διαγράφηκε επιτυχώς.", "success")
+
+    return redirect(url_for("admin"))
+
+
+@app.route("/admin/services/new", methods=["GET", "POST"])
+@login_required
+def add_service():
+    if request.method == "POST":
+        data = get_service_form_data()
+
+        if not all(data.values()):
+            flash("Παρακαλώ συμπληρώστε και τα 2 πεδία.", "danger")
+            return render_template("service_form.html", values=data)
+
+        db = get_db()
+        db.execute(
+            "INSERT INTO services (name, details) VALUES(?, ?)",
+            (data["name"], data["details"]),
+        )
+        db.commit()
+
+        flash("Η υπηρεσία προστέθηκε επιτυχώς.", "success")
+
+        return redirect(url_for("admin"))
+
+    return render_template("service_form.html")
+
+
+@app.route("/admin/services/<int:service_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_service(service_id):
+    db = get_db()
+    service = get_service_or_404(db, service_id)
+
+    if request.method == "POST":
+        data = get_service_form_data()
+
+        if not all(data.values()):
+            flash("Παρακαλώ συμπληρώστε και τα 2 πεδία.", "danger")
+            return render_template(
+                "service_form.html", values=data, service_id=service_id
+            )
+
+        db.execute(
+            "UPDATE services SET name = ?, details = ? WHERE id = ?",
+            (data["name"], data["details"], service_id),
+        )
+        db.commit()
+
+        flash("Η υπηρεσία ενημερώθηκε επιτυχώς.", "success")
+
+        return redirect(url_for("admin"))
+
+    return render_template("service_form.html", values=service, service_id=service_id)
+
+
+@app.route("/admin/services/<int:service_id>/delete", methods=["POST"])
+@login_required
+def delete_service(service_id):
+    db = get_db()
+    get_service_or_404(db, service_id)
+
+    db.execute("DELETE FROM services WHERE id = ?", (service_id,))
+    db.commit()
+
+    flash("Η υπηρεσία διαγράφηκε επιτυχώς.", "success")
+
+    return redirect(url_for("admin"))
+
+
 @app.route("/admin/contact-info", methods=["GET", "POST"])
 @login_required
 def edit_clinic_info():
@@ -321,9 +483,23 @@ def edit_clinic_info():
             flash("Παρακαλώ συμπληρώστε το email και το τηλέφωνο.", "danger")
             return render_template("contact_info_form.html", values=clinic_info)
 
+        logo_filename, invalid = process_photo_upload(
+            "logo", clinic_info["logo_filename"]
+        )
+
+        if invalid:
+            return render_template("contact_info_form.html", values=clinic_info)
+
         db.execute(
-            "UPDATE clinic_info SET email = ?, phone = ?, instagram_url = ?, facebook_url = ? WHERE id = ?",
-            (email, phone, instagram_url, facebook_url, clinic_info["id"]),
+            "UPDATE clinic_info SET email = ?, phone = ?, instagram_url = ?, facebook_url = ?, logo_filename = ? WHERE id = ?",
+            (
+                email,
+                phone,
+                instagram_url,
+                facebook_url,
+                logo_filename,
+                clinic_info["id"],
+            ),
         )
         db.commit()
 

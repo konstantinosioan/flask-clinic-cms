@@ -19,11 +19,25 @@ CREATE TABLE clinic_info (
     phone TEXT NOT NULL,
     email TEXT NOT NULL,
     instagram_url TEXT,
-    facebook_url TEXT
+    facebook_url TEXT,
+    logo_filename TEXT NOT NULL
 );
 
 CREATE TABLE admins (
     id INTEGER PRIMARY KEY,
     username TEXT NOT NULL,
     pass_hash TEXT NOT NULL
+);
+
+CREATE TABLE announcements (
+    id INTEGER PRIMARY KEY,
+    title TEXT NOT NULL,
+    body TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE services (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    details TEXT NOT NULL
 );

@@ -9,7 +9,7 @@
         <div class="card shadow-sm">
             <div class="card-body p-4">
                 <h1 class="h4 text-center mb-4">Στοιχεία Κλινικής</h1>
-                <form action="{{ url_for('edit_clinic_info') }}" method="post">
+                <form action="{{ url_for('edit_clinic_info') }}" method="post" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input name="email" id="email" type="email" class="form-control" placeholder="Email" value="{{ values.email }}">
@@ -26,9 +26,20 @@
                         <label for="facebook_url" class="form-label">Facebook</label>
                         <input name="facebook_url" id="facebook_url" type="text" class="form-control" placeholder="π.χ. https://facebook.com/..." value="{{ values.facebook_url or '' }}">
                     </div>
+                    <div class="mb-3">
+                        <img id="logo-preview" class="d-none img-fluid" alt="">
+                    </div>
+                    <div class="mb-3">
+                        <label for="logo" class="form-label">Λογότυπο</label>
+                        <input name="logo" id="logo" type="file" class="form-control photo-input" accept=".jpg, .jpeg, .png, .webp, .heic, .heif">
+                    </div>
                     <button type="submit" class="btn btn-primary w-100">Αποθήκευση</button>
                 </form>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}

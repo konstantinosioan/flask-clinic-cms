@@ -35,3 +35,52 @@ function showPreview() {
 }
 
 showPreview();
+
+
+function revealOnScroll() {
+    const targets = document.querySelectorAll('.js-reveal');
+
+    const observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        }
+    }, { threshold: 0.1 });
+
+    for (const target of targets) {
+        target.classList.add('reveal');
+        observer.observe(target);
+    }
+}
+
+revealOnScroll();
+
+
+function setupAnnouncementsToggle() {
+    const items = document.querySelectorAll('.announcement-item');
+    const visibleCount = 3;
+    const button = document.getElementById('show-more-announcements');
+
+    if (items.length <= visibleCount) {
+        return;
+    }
+
+    const hiddenItems = Array.from(items).slice(visibleCount);
+
+    for (const item of hiddenItems) {
+        item.classList.add('d-none');
+    }
+
+    button.classList.remove('d-none');
+    button.addEventListener('click', () => {
+        for (const item of hiddenItems) {
+            item.classList.remove('d-none');
+        }
+
+        button.classList.add('d-none');
+    });
+}
+
+setupAnnouncementsToggle();

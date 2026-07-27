@@ -6,18 +6,21 @@
 
 {% block body %}
     <section class="text-center py-5 mb-4">
-        <h1 class="display-4 fw-bold">[Clinic Name]</h1>
+        <h1 class="display-4 fw-bold slide-in">[Clinic Name]</h1>
         <p class="lead text-muted">[Welcome Message]</p>
+        <img class="clinic-logo pop-in" src="{{ url_for('static', filename='uploads/' + clinic_info.logo_filename) }}" alt="Λογότυπο Κλινικής">
     </section>
 
     <section id="doctors" class="py-5">
         <h2 class="text-center mb-5">Οι Ιατροί μας</h2>
         {% for doctor in doctors %}
-            <div class="row justify-content-center mb-5">
-                <div class="col-12 col-md-8 col-lg-6">
-                    {% if doctor.photo_filename %}
-                        <img class="doctor-photo img-fluid d-block mx-auto border border-4 rounded mb-2" src="{{ url_for('static', filename='uploads/' + doctor.photo_filename) }}" alt="{{ doctor.name }}">
-                    {% endif %}
+            <div class="row justify-content-center align-items-center mb-5 g-4 js-reveal">
+                {% if doctor.photo_filename %}
+                    <div class="col-12 col-md-4 text-center">
+                        <img class="doctor-photo img-fluid border border-4 rounded" src="{{ url_for('static', filename='uploads/' + doctor.photo_filename) }}" alt="{{ doctor.name }}">
+                    </div>
+                {% endif %}
+                <div class="col-12 col-md-6">
                     <div class="card shadow-sm">
                         <div class="card-body">
                             <h3 class="card-title h5 mb-1">{{ doctor.name }}</h3>
@@ -32,14 +35,35 @@
         {% endfor %}
     </section>
 
+    <section id="services" class="py-5">
+        <h2 class="text-center mb-4">Άλλες Υπηρεσίες</h2>
+        <div class="row justify-content-center g-3">
+            {% for service in services %}
+                <div class="col-6 col-md-4 col-lg-3 service-col js-reveal">
+                    <details class="service-details" name="services">
+                        <summary class="card shadow-sm h-100 card-body d-flex align-items-center justify-content-center text-center fw-semibold position-relative">
+                            {{ service.name }}
+                            <span class="service-close">&times;</span>
+                        </summary>
+                        <div class="service-popup card shadow-sm p-3 text-center small text-muted">
+                            {{ service.details }}
+                        </div>
+                    </details>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
     <section id="gallery" class="py-5">
         <h2 class="text-center mb-4">Φωτογραφίες Κλινικής</h2>
         {% for item in gallery %}
-            <div class="row justify-content-center mb-4">
+            <div class="row justify-content-center gallery-item js-reveal">
                 <div class="col-12 col-md-10 col-lg-8">
                     <figure class="mb-0">
                         <img class="gallery-photo img-fluid d-block mx-auto rounded mb-2" src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="">
-                        <figcaption class="card shadow-sm card-body mb-0 text-center">{{ item.caption }}</figcaption>
+                        {% if item.caption %}
+                            <figcaption class="card shadow-sm card-body mb-0 text-center">{{ item.caption }}</figcaption>
+                        {% endif %}
                     </figure>
                 </div>
             </div>
@@ -72,4 +96,30 @@
             </div>
         </div>
     </section>
+
+    <section id="announcements" class="py-5">
+        <h2 class="text-center mb-4">Ανακοινώσεις</h2>
+        {% for announcement in announcements %}
+            <div class="row justify-content-center mb-3 announcement-item js-reveal">
+                <div class="col-12 col-md-8 col-lg-6">
+                    <div class="card shadow-sm border-start border-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-1">
+                                <h3 class="h5 mb-0">{{ announcement.title }}</h3>
+                                <span class="text-muted small">{{ announcement.created_at[:10] }}</span>
+                            </div>
+                            <p class="mb-0">{{ announcement.body }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="text-center">
+            <button type="button" id="show-more-announcements" class="btn btn-secondary d-none">Περισσότερες Ανακοινώσεις</button>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}
