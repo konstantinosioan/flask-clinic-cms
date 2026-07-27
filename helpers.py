@@ -176,13 +176,20 @@ def save_image(file):
 
 
 def process_photo_upload(field_name, existing_filename=None):
-    """Save a newly uploaded photo or keep the existing one if no new file was chosen"""
+    """Save a newly uploaded photo, deleting the replaced one, or keep the existing one if no new file was chosen"""
     file = request.files[field_name]
-    filename = save_image(file) if file.filename else existing_filename
 
-    if file.filename and filename is None:
+    if not file.filename:
+        return existing_filename, False
+
+    filename = save_image(file)
+
+    if filename is None:
         flash("Το αρχείο φωτογραφίας δεν είναι έγκυρη εικόνα.", "danger")
         return None, True
+
+    if existing_filename:
+        delete_photo(existing_filename)
 
     return filename, False
 

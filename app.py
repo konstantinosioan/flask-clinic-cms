@@ -86,6 +86,9 @@ def admin():
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
     """Show the login form or check credentials and set an admin session if they match"""
+    if session.get("admin_id"):
+        return redirect(url_for("admin"))
+
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "").strip()
