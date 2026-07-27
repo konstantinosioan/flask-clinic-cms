@@ -62,13 +62,19 @@ html {
     margin: 1rem auto 0;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
     .clinic-logo {
         position: absolute;
-        width: 400px;
+        width: 250px;
         top: 6.5rem;
         right: 1rem;
         margin: 0;
+    }
+}
+
+@media (min-width: 1200px) {
+    .clinic-logo {
+        width: 400px;
     }
 }
 

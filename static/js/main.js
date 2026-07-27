@@ -84,3 +84,17 @@ function setupAnnouncementsToggle() {
 }
 
 setupAnnouncementsToggle();
+
+
+function closeNavbarOnLinkClick() {
+    const navbarCollapseEl = document.getElementById('navbarNav');
+    const navLinks = navbarCollapseEl.querySelectorAll('.nav-link');
+
+    for (const link of navLinks) {
+        link.addEventListener('click', () => {
+            bootstrap.Collapse.getOrCreateInstance(navbarCollapseEl).hide();
+        });
+    }
+}
+
+closeNavbarOnLinkClick();

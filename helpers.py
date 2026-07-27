@@ -139,7 +139,12 @@ def valid_image(file):
     """Check that a file is a real decodable image in an allowed format"""
     image = open_image(file)
 
-    return False if image is None else image.format in ("JPEG", "PNG", "WEBP", "HEIF")
+    # MPO is what Safari sends for multi-image HEIC (e.g. Portrait mode) photos
+    return (
+        False
+        if image is None
+        else image.format in ("JPEG", "PNG", "WEBP", "HEIF", "MPO")
+    )
 
 
 def save_image(file):
@@ -162,7 +167,7 @@ def save_image(file):
     path = os.path.join(UPLOAD_DIR, filename)
 
     if extension == "jpg":
-        # HEIC isn't supported well on browsers so re-encode it as JPEG
+        # HEIC/MPO aren't supported well on browsers so re-encode them as JPEG
         image.save(path, format="JPEG")
     else:
         image.save(path, format=image_format)
@@ -184,7 +189,7 @@ def process_photo_upload(field_name, existing_filename=None):
 
 def map_extension(image_format):
     """Map a Pillow image format to the file extension it should be saved with"""
-    return "jpg" if image_format in ("JPEG", "HEIF") else image_format.lower()
+    return "jpg" if image_format in ("JPEG", "HEIF", "MPO") else image_format.lower()
 
 
 def delete_photo(filename):

@@ -31,8 +31,8 @@ app.secret_key = os.environ.get("SECRET_KEY")
 # Auto-logout the admin after 30 minutes of inactivity
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=30)
 
-# Ensures that uploaded photos are 5MB size capped
-app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
+# Caps uploaded photo size at 16MB
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
 # Custom filter
 app.jinja_env.filters["truncate_words"] = truncate_words
@@ -540,6 +540,12 @@ def not_found(error):
 def server_error(error):
     """Show a custom 500 page for unhandled server errors"""
     return render_template("500.html"), 500
+
+
+@app.errorhandler(413)
+def file_too_large(error):
+    """Show a custom page when an uploaded file exceeds MAX_CONTENT_LENGTH"""
+    return render_template("413.html"), 413
 
 
 @app.teardown_appcontext
