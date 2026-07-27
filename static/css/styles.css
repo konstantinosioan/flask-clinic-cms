@@ -10,12 +10,14 @@ html {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
-.photo-contain {
-    object-fit: contain;
-}
-
 .doctor-photo {
     width: 220px;
+}
+
+.gallery-photo {
+    width: 1000px;
+    max-width: 100%;
+    border: 6px solid #8b5e3c;
 }
 
 .thumbnail-cover {

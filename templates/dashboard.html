@@ -5,14 +5,14 @@
 {% endblock %}
 
 {% block body %}
-    <div class="row align-items-center mt-3 mb-4">
-        <div class="col d-flex justify-content-start">
+    <div class="row align-items-center mt-3 mb-4 g-2">
+        <div class="col-12 col-md d-flex justify-content-center justify-content-md-start">
             <a href="{{ url_for('add_doctor') }}" class="btn btn-primary">Πρόσθεσε Ιατρό</a>
         </div>
-        <div class="col d-flex justify-content-center">
+        <div class="col-12 col-md d-flex justify-content-center">
             <a href="{{ url_for('edit_clinic_info') }}" class="btn btn-secondary btn-sm">Στοιχεία Κλινικής</a>
         </div>
-        <div class="col d-flex justify-content-end gap-2">
+        <div class="col-12 col-md d-flex justify-content-center justify-content-md-end gap-2">
             <a href="{{ url_for('change_password') }}" class="btn btn-secondary btn-sm">Αλλαγή Κωδικού</a>
             <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm">Αποσύνδεση</a>
         </div>
@@ -20,11 +20,11 @@
 
     <ul class="list-group">
         {% for doctor in doctors %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center">
                 {{ doctor.name }}
                 <div>
-                    <a href="{{ url_for('edit_doctor', id=doctor.id) }}" class="btn btn-secondary btn-sm">Επεξεργασία</a>
-                    <a href="{{ url_for('delete_doctor', id=doctor.id) }}" class="btn btn-danger btn-sm">Διαγραφή</a>
+                    <a href="{{ url_for('edit_doctor', doctor_id=doctor.id) }}" class="btn btn-secondary btn-sm">Επεξεργασία</a>
+                    <a href="{{ url_for('delete_doctor', doctor_id=doctor.id) }}" class="btn btn-danger btn-sm">Διαγραφή</a>
                 </div>
             </li>
         {% endfor %}
@@ -34,14 +34,14 @@
 
     <ul class="list-group mt-3">
         {% for gallery_item in gallery_items %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
+            <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center">
                 <div class="d-flex align-items-center gap-2">
-                    <img class="thumbnail-cover" src="{{ url_for('static', filename='uploads/' + gallery_item.image_filename) if gallery_item.image_filename else url_for('static', filename='placeholder.svg') }}" alt="">
+                    <img class="thumbnail-cover" src="{{ url_for('static', filename='uploads/' + gallery_item.image_filename) }}" alt="">
                     <span>{{ gallery_item.caption | truncate_words }}</span>
                 </div>
                 <div>
-                    <a href="{{ url_for('edit_gallery_item', id=gallery_item.id) }}" class="btn btn-secondary btn-sm">Επεξεργασία</a>
-                    <form class="confirm-delete d-inline" action="{{ url_for('delete_gallery_item', id=gallery_item.id) }}" method="post">
+                    <a href="{{ url_for('edit_gallery_item', gallery_id=gallery_item.id) }}" class="btn btn-secondary btn-sm">Επεξεργασία</a>
+                    <form class="confirm-delete d-inline" action="{{ url_for('delete_gallery_item', gallery_id=gallery_item.id) }}" method="post">
                         <button type="submit" class="btn btn-danger btn-sm">Διαγραφή</button>
                     </form>
                 </div>

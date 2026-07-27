@@ -1,16 +1,21 @@
-import sqlite3
-import secrets
 import os
+import secrets
+import sqlite3
 
-from flask import g, redirect, session, request, url_for, abort
 from functools import wraps
-from PIL import Image
+from flask import g, redirect, session, request, url_for, abort, flash
+from PIL import Image, ImageOps
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "clinic.db")
+UPLOAD_DIR = os.path.join(BASE_DIR, "static", "uploads")
+
 
 def get_db():
     if "db" not in g:
-        g.db = sqlite3.connect("clinic.db")
+        g.db = sqlite3.connect(DB_PATH)
         g.db.row_factory = sqlite3.Row
-        
+
     return g.db
 
 
@@ -19,18 +24,18 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if session.get("admin_id") is None:
             return redirect(url_for("admin_login"))
-        
+
         return f(*args, **kwargs)
-    
+
     return decorated_function
-        
-        
+
+
 def valid_password(password):
     if password is None or len(password) < 8:
         return False
-    
+
     has_number = has_uppercase = has_special = False
-    
+
     for char in password:
         if char.isdigit():
             has_number = True
@@ -38,31 +43,27 @@ def valid_password(password):
             has_uppercase = True
         elif not char.isalnum():
             has_special = True
-            
+
     return has_number and has_uppercase and has_special
 
 
 def get_doctor_form_data():
-    name = request.form.get("name", "").strip()
-    role = request.form.get("role", "").strip()
-    bio = request.form.get("bio", "").strip()
-    email = request.form.get("email", "").strip()
-    phone = request.form.get("phone", "").strip()
+    fields = ("name", "role", "bio", "email", "phone")
 
-    return {"name": name, "role": role, "bio": bio, "email": email, "phone": phone}
+    return {field: request.form.get(field, "").strip() for field in fields}
 
 
-def get_doctor_or_404(db, id):
-    doctor = db.execute("SELECT * FROM doctors WHERE id = ?", (id,)).fetchone()
+def get_doctor_or_404(db, doctor_id):
+    doctor = db.execute("SELECT * FROM doctors WHERE id = ?", (doctor_id,)).fetchone()
 
     if not doctor:
         abort(404)
-        
+
     return doctor
 
 
-def get_gallery_item_or_404(db, id):
-    item = db.execute("SELECT * FROM gallery WHERE id = ?", (id,)).fetchone()
+def get_gallery_item_or_404(db, gallery_id):
+    item = db.execute("SELECT * FROM gallery WHERE id = ?", (gallery_id,)).fetchone()
 
     if not item:
         abort(404)
@@ -85,7 +86,7 @@ def truncate_words(text, count=7):
 def valid_image(file):
     image = open_image(file)
 
-    return False if image is None else image.format in ('JPEG', 'PNG', 'WEBP')
+    return False if image is None else image.format in ("JPEG", "PNG", "WEBP")
 
 
 def save_image(file):
@@ -94,18 +95,32 @@ def save_image(file):
 
     file.seek(0)
     image = Image.open(file)
+    image_format = image.format
+    image = ImageOps.exif_transpose(image)
 
-    extension = map_extension(image.format)
+    extension = map_extension(image_format)
     filename = f"{secrets.token_hex(12)}.{extension}"
-    path = os.path.join('static', 'uploads', filename)
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    path = os.path.join(UPLOAD_DIR, filename)
 
-    image.save(path, format=image.format)
+    image.save(path, format=image_format)
 
     return filename
 
 
+def process_photo_upload(field_name, existing_filename=None):
+    file = request.files[field_name]
+    filename = save_image(file) if file.filename else existing_filename
+
+    if file.filename and filename is None:
+        flash("Το αρχείο φωτογραφίας δεν είναι έγκυρη εικόνα.", "danger")
+        return None, True
+
+    return filename, False
+
+
 def map_extension(image_format):
-    return 'jpg' if image_format == 'JPEG' else image_format.lower()
+    return "jpg" if image_format == "JPEG" else image_format.lower()
 
 
 def delete_photo(filename):
@@ -113,9 +128,19 @@ def delete_photo(filename):
         return
 
     try:
-        os.remove(os.path.join('static', 'uploads', filename))
+        os.remove(os.path.join(UPLOAD_DIR, filename))
     except OSError:
         pass
+
+
+def normalize_url(value):
+    if not value:
+        return None
+
+    if not value.startswith(("http://", "https://")):
+        return "https://" + value
+
+    return value
 
 
 MAX_IMAGE_PIXELS = 50_000_000

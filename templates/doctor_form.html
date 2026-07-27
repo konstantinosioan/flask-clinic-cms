@@ -9,7 +9,7 @@
         <div class="card shadow-sm">
             <div class="card-body p-4">
                 <h1 class="h4 text-center mb-4">{{ "Επεξεργασία Ιατρού" if doctor_id else "Προσθήκη Ιατρού" }}</h1>
-                <form action="{{ url_for('edit_doctor', id=doctor_id) if doctor_id else url_for('add_doctor') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ url_for('edit_doctor', doctor_id=doctor_id) if doctor_id else url_for('add_doctor') }}" method="post" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="name" class="form-label">Ονοματεπώνυμο</label>
                         <input name="name" id="name" type="text" class="form-control" placeholder="π.χ. Γιώργος Παπαδόπουλος" value="{{ values.name if values else '' }}">
@@ -31,7 +31,7 @@
                         <input name="phone" id="phone" type="tel" class="form-control" placeholder="π.χ. 99123456 ή 22123456" pattern="[29][0-9]{7}" title="8 ψηφία, ξεκινώντας με 2 ή 9" value="{{ values.phone if values else '' }}">
                     </div>
                     <div class="mb-3">
-                        <img id="photo-preview" class="d-none img-fluid">
+                        <img id="photo-preview" class="d-none img-fluid" alt="">
                     </div>
                     <div class="mb-3">
                         <label for="photo" class="form-label">Φωτογραφία</label>

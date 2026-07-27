@@ -1,6 +1,6 @@
 import os
-from io import BytesIO
 
+from io import BytesIO
 from PIL import Image
 
 from helpers import valid_password, valid_image, save_image

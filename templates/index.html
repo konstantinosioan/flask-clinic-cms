@@ -36,12 +36,10 @@
         <h2 class="text-center mb-4">Φωτογραφίες Κλινικής</h2>
         {% for item in gallery %}
             <div class="row justify-content-center mb-4">
-                <div class="col-12 col-md-8 col-lg-6">
-                    <figure class="card shadow-sm mb-0">
-                        <div class="ratio ratio-4x3 bg-light">
-                            <img class="photo-contain" src="{{ url_for('static', filename='uploads/' + item.image_filename) if item.image_filename else url_for('static', filename='placeholder.svg') }}" alt="">
-                        </div>
-                        <figcaption class="card-body mb-0">{{ item.caption }}</figcaption>
+                <div class="col-12 col-md-10 col-lg-8">
+                    <figure class="mb-0">
+                        <img class="gallery-photo img-fluid d-block mx-auto rounded mb-2" src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="">
+                        <figcaption class="card shadow-sm card-body mb-0 text-center">{{ item.caption }}</figcaption>
                     </figure>
                 </div>
             </div>
@@ -55,8 +53,16 @@
                 <p class="fs-5 mb-3"><strong>Διεύθυνση:</strong> [Clinic Address]</p>
                 <p class="fs-5 mb-3"><strong>Email:</strong> <a href="mailto:{{ clinic_info.email }}">{{ clinic_info.email }}</a></p>
                 <p class="fs-5 mb-3"><strong>Τηλέφωνο:</strong> <a href="tel:+357{{ clinic_info.phone }}">{{ clinic_info.phone }}</a></p>
-                {% if clinic_info.instagram_url %}
-                    <p class="fs-5 mb-0"><strong>Ακολουθήστε μας:</strong> <a href="{{ clinic_info.instagram_url }}" target="_blank" rel="noopener">Instagram</a></p>
+                {% if clinic_info.instagram_url or clinic_info.facebook_url %}
+                    <p class="fs-5 mb-0">
+                        <strong>Ακολουθήστε μας:</strong>
+                        {% if clinic_info.instagram_url %}
+                            <a href="{{ clinic_info.instagram_url }}" target="_blank" rel="noopener">Instagram</a>
+                        {% endif %}
+                        {% if clinic_info.facebook_url %}
+                            <a href="{{ clinic_info.facebook_url }}" target="_blank" rel="noopener">Facebook</a>
+                        {% endif %}
+                    </p>
                 {% endif %}
             </div>
             <div class="col-12 col-md-7">

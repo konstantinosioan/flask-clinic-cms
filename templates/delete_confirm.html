@@ -11,7 +11,7 @@
                 <h1 class="h4 mb-3">Επιβεβαίωση Διαγραφής</h1>
                 <p class="mb-4">Θέλετε σίγουρα να διαγράψετε τον/την Δρ. {{ doctor.name }};</p>
                 <div class="d-flex gap-2 justify-content-center">
-                    <form action="{{ url_for('delete_doctor', id=doctor.id) }}" method="post">
+                    <form action="{{ url_for('delete_doctor', doctor_id=doctor.id) }}" method="post">
                         <button type="submit" class="btn btn-danger">Διαγραφή</button>
                     </form>
                     <a href="{{ url_for('admin') }}" class="btn btn-secondary">Ακύρωση</a>
