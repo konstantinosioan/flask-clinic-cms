@@ -1,3 +1,5 @@
+"""Routes for the public clinic site and the admin CMS"""
+
 import os
 
 from datetime import timedelta
@@ -38,6 +40,7 @@ app.jinja_env.filters["truncate_words"] = truncate_words
 
 @app.route("/")
 def index():
+    """Render the public clinic page with current doctors, gallery images, services, info and announcements"""
     db = get_db()
 
     doctors = db.execute("SELECT * FROM doctors ORDER BY id").fetchall()
@@ -61,6 +64,7 @@ def index():
 @app.route("/admin")
 @login_required
 def admin():
+    """Show the admin dashboard page"""
     db = get_db()
 
     doctors = db.execute("SELECT * FROM doctors ORDER BY id").fetchall()
@@ -81,6 +85,7 @@ def admin():
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
+    """Show the login form or check credentials and set an admin session if they match"""
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "").strip()
@@ -112,6 +117,7 @@ def admin_login():
 
 @app.route("/admin/logout")
 def logout():
+    """Clear the admin session and redirect to homepage"""
     session.clear()
 
     return redirect(url_for("index"))
@@ -120,6 +126,7 @@ def logout():
 @app.route("/admin/password", methods=["GET", "POST"])
 @login_required
 def change_password():
+    """Show the change password form or update the admin's password if valid"""
     if request.method == "POST":
         curr_password = request.form.get("password", "").strip()
         new_password = request.form.get("new_password", "").strip()
@@ -166,6 +173,7 @@ def change_password():
 @app.route("/admin/doctors/new", methods=["GET", "POST"])
 @login_required
 def add_doctor():
+    """Show the add doctor form or create a new doctor from valid submitted data"""
     if request.method == "POST":
         data = get_doctor_form_data()
 
@@ -202,6 +210,7 @@ def add_doctor():
 @app.route("/admin/doctors/<int:doctor_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_doctor(doctor_id):
+    """Show a doctor's edit form pre-filled with their existing data or save changes if made"""
     db = get_db()
     doctor = get_doctor_or_404(db, doctor_id)
 
@@ -243,6 +252,7 @@ def edit_doctor(doctor_id):
 @app.route("/admin/doctors/<int:doctor_id>/delete", methods=["GET", "POST"])
 @login_required
 def delete_doctor(doctor_id):
+    """Show the delete confirmation page for a doctor or delete them upon confirmation"""
     db = get_db()
     doctor = get_doctor_or_404(db, doctor_id)
 
@@ -262,6 +272,7 @@ def delete_doctor(doctor_id):
 @app.route("/admin/gallery/new", methods=["GET", "POST"])
 @login_required
 def add_gallery_item():
+    """Show the add gallery item form or add a new photo to the gallery"""
     if request.method == "POST":
         caption = request.form.get("caption")
         image = request.files["image"]
@@ -288,6 +299,7 @@ def add_gallery_item():
 @app.route("/admin/gallery/<int:gallery_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_gallery_item(gallery_id):
+    """Show a gallery item's form pre-filled with its existing data or save changes if made"""
     db = get_db()
     gallery_item = get_gallery_item_or_404(db, gallery_id)
 
@@ -320,6 +332,7 @@ def edit_gallery_item(gallery_id):
 @app.route("/admin/gallery/<int:gallery_id>/delete", methods=["POST"])
 @login_required
 def delete_gallery_item(gallery_id):
+    """Delete a gallery item and its photo file"""
     db = get_db()
     gallery_item = get_gallery_item_or_404(db, gallery_id)
 
@@ -336,6 +349,7 @@ def delete_gallery_item(gallery_id):
 @app.route("/admin/announcements/new", methods=["GET", "POST"])
 @login_required
 def add_announcement():
+    """Show the add announcement form or publish a new announcement"""
     if request.method == "POST":
         data = get_announcement_form_data()
 
@@ -360,6 +374,7 @@ def add_announcement():
 @app.route("/admin/announcements/<int:announcement_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_announcement(announcement_id):
+    """Show an announcement's edit form pre-filled with its existing data or save changes if made"""
     db = get_db()
     announcement = get_announcement_or_404(db, announcement_id)
 
@@ -390,6 +405,7 @@ def edit_announcement(announcement_id):
 @app.route("/admin/announcements/<int:announcement_id>/delete", methods=["POST"])
 @login_required
 def delete_announcement(announcement_id):
+    """Delete an announcement"""
     db = get_db()
     get_announcement_or_404(db, announcement_id)
 
@@ -404,6 +420,7 @@ def delete_announcement(announcement_id):
 @app.route("/admin/services/new", methods=["GET", "POST"])
 @login_required
 def add_service():
+    """Show the add service form or add a new service"""
     if request.method == "POST":
         data = get_service_form_data()
 
@@ -428,6 +445,7 @@ def add_service():
 @app.route("/admin/services/<int:service_id>/edit", methods=["GET", "POST"])
 @login_required
 def edit_service(service_id):
+    """Show a service's edit form pre-filled with its existing data or save changes if made"""
     db = get_db()
     service = get_service_or_404(db, service_id)
 
@@ -456,6 +474,7 @@ def edit_service(service_id):
 @app.route("/admin/services/<int:service_id>/delete", methods=["POST"])
 @login_required
 def delete_service(service_id):
+    """Delete a service"""
     db = get_db()
     get_service_or_404(db, service_id)
 
@@ -470,6 +489,7 @@ def delete_service(service_id):
 @app.route("/admin/contact-info", methods=["GET", "POST"])
 @login_required
 def edit_clinic_info():
+    """Show the clinic contact-info form or save updated contact details and logo"""
     db = get_db()
     clinic_info = db.execute("SELECT * FROM clinic_info").fetchone()
 
@@ -512,16 +532,19 @@ def edit_clinic_info():
 
 @app.errorhandler(404)
 def not_found(error):
+    """Show a custom 404 page for unknown routes or missing resources"""
     return render_template("404.html"), 404
 
 
 @app.errorhandler(500)
 def server_error(error):
+    """Show a custom 500 page for unhandled server errors"""
     return render_template("500.html"), 500
 
 
 @app.teardown_appcontext
 def teardown_db(exception):
+    """Close the db connection at the end of each request"""
     db = g.pop("db", None)
 
     if db is not None:
