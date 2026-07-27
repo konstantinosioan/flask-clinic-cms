@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Στοιχεία Κλινικής
+{% endblock %}
+
+{% block body %}
+    <div class="col-12 col-md-8 col-lg-6 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 text-center mb-4">Στοιχεία Κλινικής</h1>
+                <form action="{{ url_for('edit_clinic_info') }}" method="post">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input name="email" id="email" type="email" class="form-control" placeholder="Email" value="{{ values.email }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Τηλέφωνο</label>
+                        <input name="phone" id="phone" type="tel" class="form-control" placeholder="π.χ. 99123456 ή 22123456" pattern="[29][0-9]{7}" title="8 ψηφία, ξεκινώντας με 2 ή 9" value="{{ values.phone }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="instagram_url" class="form-label">Instagram</label>
+                        <input name="instagram_url" id="instagram_url" type="text" class="form-control" placeholder="π.χ. https://instagram.com/..." value="{{ values.instagram_url or '' }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Αποθήκευση</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

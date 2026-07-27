@@ -17,7 +17,8 @@ CREATE TABLE gallery (
 CREATE TABLE clinic_info (
     id INTEGER PRIMARY KEY,
     phone TEXT NOT NULL,
-    email TEXT NOT NULL
+    email TEXT NOT NULL,
+    instagram_url TEXT
 );
 
 CREATE TABLE admins (

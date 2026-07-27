@@ -5,17 +5,22 @@
 {% endblock %}
 
 {% block body %}
-    <div class="col-12 col-md-6 mx-auto">
-        <form action="{{ url_for('admin_login') }}" method="post">
-            <div class="mb-3">
-                <label for="username" class="form-label">Όνομα χρήστη</label>
-                <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Όνομα χρήστη" type="text">
+    <div class="col-12 col-md-6 col-lg-4 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 text-center mb-4">Σύνδεση Διαχειριστή</h1>
+                <form action="{{ url_for('admin_login') }}" method="post">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Όνομα χρήστη</label>
+                        <input autocomplete="off" autofocus class="form-control" id="username" name="username" placeholder="Όνομα χρήστη" type="text">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Κωδικός</label>
+                        <input autocomplete="current-password" class="form-control" id="password" name="password" placeholder="Ο κωδικός σας" type="password">
+                    </div>
+                    <button class="btn btn-primary w-100" type="submit">Σύνδεση</button>
+                </form>
             </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Κωδικός</label>
-                <input autocomplete="current-password" class="form-control" name="password" placeholder="Ο κωδικός σας" type="password">
-            </div>
-            <button class="btn btn-primary" type="submit">Σύνδεση</button>
-        </form>
+        </div>
     </div>
 {% endblock %}

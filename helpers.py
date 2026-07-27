@@ -43,12 +43,12 @@ def valid_password(password):
 
 
 def get_doctor_form_data():
-    name = request.form.get("name")
-    role = request.form.get("role")
-    bio = request.form.get("bio")
-    email = request.form.get("email")
-    phone = request.form.get("phone")
-    
+    name = request.form.get("name", "").strip()
+    role = request.form.get("role", "").strip()
+    bio = request.form.get("bio", "").strip()
+    email = request.form.get("email", "").strip()
+    phone = request.form.get("phone", "").strip()
+
     return {"name": name, "role": role, "bio": bio, "email": email, "phone": phone}
 
 

@@ -2,13 +2,29 @@ html {
     scroll-behavior: smooth;
 }
 
+.card {
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
 .photo-contain {
     object-fit: contain;
+}
+
+.doctor-photo {
+    width: 220px;
 }
 
 .thumbnail-cover {
     width: 60px;
     height: 60px;
     object-fit: cover;
+}
+
+.navbar-brand, #doctors h2, #gallery h2, #contact h2 {
+    color: #2a6f6f;
 }
 
