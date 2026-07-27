@@ -6,7 +6,7 @@
 
 {% block body %}
     <section class="text-center py-5 mb-4">
-        <h1 class="display-4 fw-bold slide-in">[Clinic Name]</h1>
+        <h1 class="display-4 fw-bold slide-in clinic-name">[Clinic Name]</h1>
         <p class="lead text-muted">[Welcome Message]</p>
         <img class="clinic-logo pop-in" src="{{ url_for('static', filename='uploads/' + clinic_info.logo_filename) }}" alt="Λογότυπο Κλινικής">
     </section>
@@ -109,7 +109,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-1">
                                 <h3 class="h5 mb-0">{{ announcement.title }}</h3>
-                                <span class="text-muted small">{{ announcement.created_at[:10] }}</span>
+                                <span class="text-muted small">{{ announcement.created_at | format_cyprus_datetime }}</span>
                             </div>
                             <p class="mb-0">{{ announcement.body }}</p>
                         </div>

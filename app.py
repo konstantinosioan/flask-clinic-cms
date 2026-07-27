@@ -18,6 +18,7 @@ from helpers import (
     get_service_form_data,
     get_service_or_404,
     truncate_words,
+    format_cyprus_datetime,
     save_image,
     delete_photo,
     process_photo_upload,
@@ -34,8 +35,9 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=30)
 # Caps uploaded photo size at 16MB
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
-# Custom filter
+# Custom filters
 app.jinja_env.filters["truncate_words"] = truncate_words
+app.jinja_env.filters["format_cyprus_datetime"] = format_cyprus_datetime
 
 
 @app.route("/")

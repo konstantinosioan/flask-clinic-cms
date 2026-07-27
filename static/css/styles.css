@@ -55,6 +55,10 @@ html {
     }
 }
 
+.clinic-name {
+    font-family: Georgia, "Times New Roman", serif;
+}
+
 .clinic-logo {
     display: block;
     width: 200px;

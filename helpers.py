@@ -4,6 +4,8 @@ import os
 import secrets
 import sqlite3
 
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from functools import wraps
 from flask import g, redirect, session, request, url_for, abort, flash
 from PIL import Image, ImageOps
@@ -133,6 +135,15 @@ def truncate_words(text, count=7):
         return text
 
     return " ".join(words[:count]) + "..."
+
+
+def format_cyprus_datetime(utc_string):
+    """Convert a stored UTC timestamp to a Cyprus-local date and time string (DD/MM/YYYY, HH:MM)"""
+    utc_time = datetime.strptime(utc_string, "%Y-%m-%d %H:%M:%S").replace(
+        tzinfo=ZoneInfo("UTC")
+    )
+
+    return utc_time.astimezone(ZoneInfo("Asia/Nicosia")).strftime("%d/%m/%Y, %H:%M")
 
 
 def valid_image(file):
