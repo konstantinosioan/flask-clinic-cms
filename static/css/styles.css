@@ -165,3 +165,7 @@ html {
     display: inline;
 }
 
+.clinic-hours {
+    white-space: pre-line;
+}
+

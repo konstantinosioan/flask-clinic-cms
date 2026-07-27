@@ -502,6 +502,7 @@ def edit_clinic_info():
         phone = request.form.get("phone", "").strip()
         instagram_url = normalize_url(request.form.get("instagram_url", "").strip())
         facebook_url = normalize_url(request.form.get("facebook_url", "").strip())
+        hours = request.form.get("hours", "").strip() or None
 
         if not email or not phone:
             flash("Παρακαλώ συμπληρώστε το email και το τηλέφωνο.", "danger")
@@ -515,12 +516,13 @@ def edit_clinic_info():
             return render_template("contact_info_form.html", values=clinic_info)
 
         db.execute(
-            "UPDATE clinic_info SET email = ?, phone = ?, instagram_url = ?, facebook_url = ?, logo_filename = ? WHERE id = ?",
+            "UPDATE clinic_info SET email = ?, phone = ?, instagram_url = ?, facebook_url = ?, hours = ?, logo_filename = ? WHERE id = ?",
             (
                 email,
                 phone,
                 instagram_url,
                 facebook_url,
+                hours,
                 logo_filename,
                 clinic_info["id"],
             ),

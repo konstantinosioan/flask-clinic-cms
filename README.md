@@ -6,7 +6,7 @@ It includes a public page and an admin dashboard for managing the doctors, servi
 ## Features
 
 - **Public page**: doctors with their details, other services offered by the clinic, a gallery of clinic photos, the clinic's contact details and location map, and an announcements section.
-- **Admin dashboard**: add/edit/delete doctors, gallery photos, and announcements; add/delete services; update the clinic's contact info and logo; change the admin password.
+- **Admin dashboard**: add/edit/delete doctors, gallery photos, and announcements; add/delete services; update the clinic's contact info, operating hours, and logo; change the admin password.
 - **Image uploads** (doctor photos, gallery photos, and the clinic logo) are validated with Pillow: the file must be a real, decodable image in an allowed format (JPEG, PNG, WEBP, HEIC, or MPO for iPhone support), under 16MB, and under 50 million pixels.
 - When a doctor or gallery item is deleted, or its photo is replaced during an edit, the old image file is automatically removed from disk.
 

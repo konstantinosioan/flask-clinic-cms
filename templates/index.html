@@ -77,6 +77,9 @@
                 <p class="fs-5 mb-3"><strong>Διεύθυνση:</strong> [Clinic Address]</p>
                 <p class="fs-5 mb-3"><strong>Email:</strong> <a href="mailto:{{ clinic_info.email }}">{{ clinic_info.email }}</a></p>
                 <p class="fs-5 mb-3"><strong>Τηλέφωνο:</strong> <a href="tel:+357{{ clinic_info.phone }}">{{ clinic_info.phone }}</a></p>
+                {% if clinic_info.hours %}
+                    <p class="fs-5 mb-3"><strong>Ωράριο Λειτουργίας:</strong><br><span class="clinic-hours">{{ clinic_info.hours }}</span></p>
+                {% endif %}
                 {% if clinic_info.instagram_url or clinic_info.facebook_url %}
                     <p class="fs-5 mb-0">
                         <strong>Ακολουθήστε μας:</strong>

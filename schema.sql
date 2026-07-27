@@ -20,6 +20,7 @@ CREATE TABLE clinic_info (
     email TEXT NOT NULL,
     instagram_url TEXT,
     facebook_url TEXT,
+    hours TEXT,
     logo_filename TEXT NOT NULL
 );
 
