@@ -169,7 +169,7 @@ html {
     display: inline;
 }
 
-.clinic-hours {
+.clinic-hours, .doctor-bio {
     white-space: pre-line;
 }
 
