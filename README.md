@@ -96,6 +96,8 @@ flask-clinic-cms/
 ├── static/
 │   ├── css/                  # Custom styles
 │   ├── js/                   # Vanilla JS enhancements
+│   ├── icons/                 # Inline SVG icons (email, phone, Instagram, Facebook)
+│   ├── robots.txt             # Tells crawlers not to index /admin
 │   └── uploads/               # Uploaded photos (git-ignored)
 └── test/                    # pytest test suite
 ```
