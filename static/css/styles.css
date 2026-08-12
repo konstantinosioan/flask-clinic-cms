@@ -1,5 +1,39 @@
+:root {
+    --brand-teal: #2a6f6f;
+    --panel-tint: #eef4f4;
+    --panel-tint-hover: #dfeaea;
+    --font-serif: Georgia, "Times New Roman", serif;
+    --danger-red: #600812;
+}
+
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    scroll-padding-top: 72px;
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--brand-teal);
+    --bs-btn-border-color: var(--brand-teal);
+    --bs-btn-hover-bg: #235d5d;
+    --bs-btn-hover-border-color: #235d5d;
+    --bs-btn-active-bg: #1d4f4f;
+    --bs-btn-active-border-color: #1d4f4f;
+    --bs-btn-disabled-bg: var(--brand-teal);
+    --bs-btn-disabled-border-color: var(--brand-teal);
+    --bs-btn-focus-shadow-rgb: 42, 111, 111;
+}
+
+.btn-danger {
+    --bs-btn-bg: var(--danger-red);
+    --bs-btn-border-color: var(--danger-red);
+    --bs-btn-hover-bg: #4d060e;
+    --bs-btn-hover-border-color: #4d060e;
+    --bs-btn-active-bg: #40050c;
+    --bs-btn-active-border-color: #40050c;
+    --bs-btn-disabled-bg: var(--danger-red);
+    --bs-btn-disabled-border-color: var(--danger-red);
+    --bs-btn-focus-shadow-rgb: 96, 8, 18;
 }
 
 @keyframes slide-in-left {
@@ -56,7 +90,7 @@ html {
 }
 
 .clinic-name {
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: var(--font-serif);
 }
 
 .clinic-logo {
@@ -90,18 +124,140 @@ html {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
-.doctor-photo {
-    width: 220px;
+.full-bleed {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
 }
 
-.gallery-item {
-    margin-bottom: 4rem;
+.doctor-row + .doctor-row {
+    margin-top: 3rem;
 }
 
-.gallery-photo {
-    width: 1000px;
+.doctor-media {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.doctor-photo-full {
+    width: 85%;
+    height: auto;
+    display: block;
+    border: 4px solid var(--brand-teal);
+}
+
+.info-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    background-color: var(--panel-tint);
+}
+
+@media (min-width: 768px) {
+    .doctor-media {
+        justify-content: flex-start;
+    }
+
+    .flex-md-row-reverse .doctor-media {
+        justify-content: flex-end;
+    }
+
+    .doctor-photo-full {
+        width: auto;
+        max-width: 450px;
+        max-height: 550px;
+    }
+
+    .info-panel {
+        padding: 3rem 4rem;
+    }
+}
+
+.doctor-name {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    color: var(--brand-teal);
+}
+
+.doctor-role {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.85rem;
+}
+
+.doctor-bio {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+.gallery-item-full + .gallery-item-full {
+    margin-top: 3rem;
+}
+
+.gallery-item-full {
+    background-color: var(--panel-tint);
+    padding: 1.5rem;
+}
+
+.gallery-photo-full {
+    width: auto;
+    height: auto;
     max-width: 100%;
-    border: 6px solid #8b5e3c;
+    max-height: 80vh;
+    display: block;
+    margin: 0 auto;
+    border: 4px solid var(--brand-teal);
+}
+
+.gallery-caption {
+    text-align: center;
+    padding-top: 1.25rem;
+    font-size: 1.05rem;
+    color: #444;
+}
+
+.social-links, .contact-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.contact-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.contact-icon-lg {
+    width: 22px;
+    height: 22px;
+}
+
+.social-icon {
+    width: 32px;
+    height: 32px;
+}
+
+.social-icon:hover {
+    opacity: 0.75;
+}
+
+.contact-row {
+    min-height: 450px;
+}
+
+.contact-media iframe {
+    width: 100%;
+    height: 100%;
+    min-height: 350px;
+    display: block;
+    border: 0;
 }
 
 .thumbnail-cover {
@@ -110,25 +266,42 @@ html {
     object-fit: cover;
 }
 
-.navbar-brand, #doctors h2, #gallery h2, #contact h2, #announcements h2, #services h2 {
-    color: #2a6f6f;
+.navbar-brand, #doctors, #gallery, #contact, #announcements, #services h2 {
+    color: var(--brand-teal);
 }
 
-.announcement-item .card {
-    border-left-color: #2a6f6f;
+.announcement-panel {
+    background-color: var(--panel-tint);
+    padding: 1.5rem 2rem;
+    border-radius: 1rem;
+}
+
+.announcement-title {
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    color: var(--brand-teal);
 }
 
 #services .card {
+    background-color: var(--panel-tint);
     transition: box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
 #services .card:hover {
-    background-color: #f0f0f0;
+    background-color: var(--panel-tint-hover);
 }
 
 #services summary {
     list-style: none;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 600;
+    padding: 1.75rem 1rem;
+    font-size: 1.15rem;
+    color: var(--brand-teal);
 }
 
 #services summary::-webkit-details-marker {
@@ -154,22 +327,54 @@ html {
     right: 0;
     z-index: 10;
     margin-top: 0.25rem;
+    padding: 1rem;
+    text-align: center;
+    font-size: 14px;
+    color: rgba(33, 37, 41, 0.75);
 }
 
-.service-close {
-    display: none;
+.service-details summary::after {
+    content: "+";
     position: absolute;
-    top: 0.25rem;
-    right: 0.5rem;
+    top: 0.5rem;
+    right: 0.75rem;
     font-size: 1.25rem;
     line-height: 1;
+    color: var(--brand-teal);
 }
 
-.service-details[open] .service-close {
-    display: inline;
+.service-details[open] summary::after {
+    content: "\00d7";
 }
 
-.clinic-hours, .doctor-bio {
+.clinic-hours {
     white-space: pre-line;
+}
+
+.admin-list-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.admin-list-item-actions {
+    margin-left: auto;
+}
+
+@media (min-width: 576px) {
+    .admin-list-item {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0;
+        padding: 0.5rem 1rem;
+    }
+
+    .admin-list-item-actions {
+        margin-left: 0;
+    }
 }
 

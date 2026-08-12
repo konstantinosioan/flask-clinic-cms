@@ -8,6 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from helpers import (
     get_db,
+    inject_nav_flags,
     login_required,
     valid_password,
     get_doctor_form_data,
@@ -39,6 +40,9 @@ app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 app.jinja_env.filters["truncate_words"] = truncate_words
 app.jinja_env.filters["format_cyprus_datetime"] = format_cyprus_datetime
 
+# Makes has_doctors/has_gallery/etc. available to the navbar on every page
+app.context_processor(inject_nav_flags)
+
 
 @app.route("/")
 def index():
@@ -61,6 +65,12 @@ def index():
         announcements=announcements,
         services=services,
     )
+
+
+@app.route("/robots.txt")
+def robots_txt():
+    """Serve robots.txt from the site root where crawlers expect to find it"""
+    return app.send_static_file("robots.txt")
 
 
 @app.route("/admin")

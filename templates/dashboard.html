@@ -14,15 +14,15 @@
         </div>
         <div class="col-12 col-md d-flex justify-content-center justify-content-md-end gap-2">
             <a href="{{ url_for('change_password') }}" class="btn btn-secondary btn-sm">Αλλαγή Κωδικού</a>
-            <a href="{{ url_for('logout') }}" class="btn btn-secondary btn-sm">Αποσύνδεση</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-dark btn-sm">Αποσύνδεση</a>
         </div>
     </div>
 
     <ul class="list-group">
         {% for doctor in doctors %}
-            <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center">
+            <li class="list-group-item admin-list-item">
                 {{ doctor.name }}
-                <div>
+                <div class="admin-list-item-actions">
                     <a href="{{ url_for('edit_doctor', doctor_id=doctor.id) }}" class="btn btn-secondary btn-sm">Επεξεργασία</a>
                     <a href="{{ url_for('delete_doctor', doctor_id=doctor.id) }}" class="btn btn-danger btn-sm">Διαγραφή</a>
                 </div>
@@ -34,12 +34,12 @@
 
     <ul class="list-group mt-3">
         {% for gallery_item in gallery_items %}
-            <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center">
+            <li class="list-group-item admin-list-item">
                 <div class="d-flex align-items-center gap-2">
                     <img class="thumbnail-cover" src="{{ url_for('static', filename='uploads/' + gallery_item.image_filename) }}" alt="">
                     <span>{{ gallery_item.caption | truncate_words }}</span>
                 </div>
-                <div>
+                <div class="admin-list-item-actions">
                     <a href="{{ url_for('edit_gallery_item', gallery_id=gallery_item.id) }}" class="btn btn-secondary btn-sm">Επεξεργασία</a>
                     <form class="confirm-delete d-inline" action="{{ url_for('delete_gallery_item', gallery_id=gallery_item.id) }}" method="post">
                         <button type="submit" class="btn btn-danger btn-sm">Διαγραφή</button>
@@ -53,12 +53,12 @@
 
     <ul class="list-group mt-3">
         {% for announcement in announcements %}
-            <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center">
+            <li class="list-group-item admin-list-item">
                 <div>
                     <strong>{{ announcement.title }}</strong>
                     <span class="text-muted">{{ announcement.body | truncate_words }}</span>
                 </div>
-                <div>
+                <div class="admin-list-item-actions">
                     <a href="{{ url_for('edit_announcement', announcement_id=announcement.id) }}" class="btn btn-secondary btn-sm">Επεξεργασία</a>
                     <form class="confirm-delete d-inline" action="{{ url_for('delete_announcement', announcement_id=announcement.id) }}" method="post">
                         <button type="submit" class="btn btn-danger btn-sm">Διαγραφή</button>
@@ -72,9 +72,9 @@
 
     <ul class="list-group mt-3">
         {% for service in services %}
-            <li class="list-group-item d-flex flex-wrap justify-content-between align-items-center">
+            <li class="list-group-item admin-list-item">
                 {{ service.name }}
-                <div>
+                <div class="admin-list-item-actions">
                     <a href="{{ url_for('edit_service', service_id=service.id) }}" class="btn btn-secondary btn-sm">Επεξεργασία</a>
                     <form class="confirm-delete d-inline" action="{{ url_for('delete_service', service_id=service.id) }}" method="post">
                         <button type="submit" class="btn btn-danger btn-sm">Διαγραφή</button>

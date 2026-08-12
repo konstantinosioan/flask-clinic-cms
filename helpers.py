@@ -28,6 +28,24 @@ def get_db():
     return g.db
 
 
+def inject_nav_flags():
+    """Make section-existence flags available to the navbar on every page"""
+    db = get_db()
+
+    return {
+        "has_doctors": db.execute("SELECT 1 FROM doctors LIMIT 1").fetchone()
+        is not None,
+        "has_services": db.execute("SELECT 1 FROM services LIMIT 1").fetchone()
+        is not None,
+        "has_gallery": db.execute("SELECT 1 FROM gallery LIMIT 1").fetchone()
+        is not None,
+        "has_announcements": db.execute(
+            "SELECT 1 FROM announcements LIMIT 1"
+        ).fetchone()
+        is not None,
+    }
+
+
 def login_required(f):
     """Redirect to the login page if not logged in as admin"""
 
@@ -170,6 +188,8 @@ def save_image(file):
     # Corrects phone-camera rotation before the exif metadata gets stripped
     image = ImageOps.exif_transpose(image)
 
+    image.thumbnail((MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION))
+
     extension = map_extension(image_format)
 
     # Server-generated filename for more security
@@ -238,6 +258,9 @@ def normalize_url(value):
 
 # Guards against decompression bomb images with huge pixel counts
 MAX_IMAGE_PIXELS = 50_000_000
+
+# Shrinks oversized photos for performance without changing how they look
+MAX_IMAGE_DIMENSION = 2400
 
 
 def open_image(file):

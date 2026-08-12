@@ -91,7 +91,19 @@ function closeNavbarOnLinkClick() {
     const navLinks = navbarCollapseEl.querySelectorAll('.nav-link');
 
     for (const link of navLinks) {
-        link.addEventListener('click', () => {
+        link.addEventListener('click', (event) => {
+            const isMenuOpen = navbarCollapseEl.classList.contains('show');
+            const targetSection = link.hash ? document.querySelector(link.hash) : null;
+
+            // On mobile the menu-close animation shifts the page layout, so scrolling
+            // has to wait until it fully finishes, or the target position lands wrong
+            if (isMenuOpen && targetSection) {
+                event.preventDefault();
+                navbarCollapseEl.addEventListener('hidden.bs.collapse', () => {
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                }, { once: true });
+            }
+
             bootstrap.Collapse.getOrCreateInstance(navbarCollapseEl).hide();
         });
     }

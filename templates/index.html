@@ -5,120 +5,153 @@
 {% endblock %}
 
 {% block body %}
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "MedicalClinic",
+        "name": "[Clinic Name]",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "[Clinic Address]",
+            "addressLocality": "Nicosia",
+            "addressCountry": "CY"
+        },
+        "telephone": {{ ("+357" ~ clinic_info.phone) | tojson }},
+        "url": "[Clinic Site URL]"
+    }
+    </script>
+
     <section class="text-center py-5 mb-4">
         <h1 class="display-4 fw-bold slide-in clinic-name">[Clinic Name]</h1>
         <p class="lead text-muted">[Welcome Message]</p>
         <img class="clinic-logo pop-in" src="{{ url_for('static', filename='uploads/' + clinic_info.logo_filename) }}" alt="Λογότυπο Κλινικής">
     </section>
 
-    <section id="doctors" class="py-5">
-        <h2 class="text-center mb-5">Οι Ιατροί μας</h2>
-        {% for doctor in doctors %}
-            <div class="row justify-content-center align-items-center mb-5 g-4 js-reveal">
-                {% if doctor.photo_filename %}
-                    <div class="col-12 col-md-4 text-center">
-                        <img class="doctor-photo img-fluid border border-4 rounded" src="{{ url_for('static', filename='uploads/' + doctor.photo_filename) }}" alt="{{ doctor.name }}">
-                    </div>
-                {% endif %}
-                <div class="col-12 col-md-6">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h3 class="card-title h5 mb-1">{{ doctor.name }}</h3>
-                            <p class="card-subtitle text-muted mb-3">{{ doctor.role }}</p>
+    {% if doctors %}
+        <section class="py-5">
+            <h2 id="doctors" class="text-center mb-5">Οι Ιατροί μας</h2>
+            <div class="full-bleed">
+                {% for doctor in doctors %}
+                    <div class="row g-0 doctor-row {{ 'flex-md-row-reverse' if loop.index0 is odd else '' }} js-reveal">
+                        {% if doctor.photo_filename %}
+                            <div class="col-12 col-md-auto doctor-media">
+                                <img class="doctor-photo-full" src="{{ url_for('static', filename='uploads/' + doctor.photo_filename) }}" alt="{{ doctor.name }}" loading="lazy">
+                            </div>
+                        {% endif %}
+                        <div class="col-12 col-md info-panel">
+                            <h3 class="doctor-name mb-1">{{ doctor.name }}</h3>
+                            <p class="doctor-role text-muted mb-3">{{ doctor.role }}</p>
                             <p class="doctor-bio">{{ doctor.bio }}</p>
-                            <p class="mb-1">Email: <a href="mailto:{{ doctor.email }}">{{ doctor.email }}</a></p>
-                            <p class="mb-0">Τηλέφωνο: <a href="tel:+357{{ doctor.phone }}">{{ doctor.phone }}</a></p>
+                            <p class="mb-1 contact-line">
+                                <img class="contact-icon" src="{{ url_for('static', filename='icons/email.svg') }}" alt="Email">
+                                <a href="mailto:{{ doctor.email }}">{{ doctor.email }}</a>
+                            </p>
+                            <p class="mb-0 contact-line">
+                                <img class="contact-icon" src="{{ url_for('static', filename='icons/phone.svg') }}" alt="Τηλέφωνο">
+                                <a href="tel:+357{{ doctor.phone }}">{{ doctor.phone }}</a>
+                            </p>
                         </div>
                     </div>
-                </div>
+                {% endfor %}
             </div>
-        {% endfor %}
-    </section>
+        </section>
+    {% endif %}
 
-    <section id="services" class="py-5">
-        <h2 class="text-center mb-4">Άλλες Υπηρεσίες</h2>
-        <div class="row justify-content-center g-3">
-            {% for service in services %}
-                <div class="col-6 col-md-4 col-lg-3 service-col js-reveal">
-                    <details class="service-details" name="services">
-                        <summary class="card shadow-sm h-100 card-body d-flex align-items-center justify-content-center text-center fw-semibold position-relative">
-                            {{ service.name }}
-                            <span class="service-close">&times;</span>
-                        </summary>
-                        <div class="service-popup card shadow-sm p-3 text-center small text-muted">
-                            {{ service.details }}
-                        </div>
-                    </details>
-                </div>
-            {% endfor %}
-        </div>
-    </section>
+    {% if services %}
+        <section id="services" class="py-5">
+            <h2 class="text-center mb-4">Άλλες Υπηρεσίες</h2>
+            <div class="row justify-content-center g-3">
+                {% for service in services %}
+                    <div class="col-6 col-md-4 col-lg-3 service-col js-reveal">
+                        <details class="service-details" name="services">
+                            <summary class="card shadow-sm h-100 card-body">
+                                {{ service.name }}
+                            </summary>
+                            <div class="service-popup card shadow-sm">
+                                {{ service.details }}
+                            </div>
+                        </details>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
 
-    <section id="gallery" class="py-5">
-        <h2 class="text-center mb-4">Φωτογραφίες Κλινικής</h2>
-        {% for item in gallery %}
-            <div class="row justify-content-center gallery-item js-reveal">
-                <div class="col-12 col-md-10 col-lg-8">
-                    <figure class="mb-0">
-                        <img class="gallery-photo img-fluid d-block mx-auto rounded mb-2" src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="">
+    {% if gallery %}
+        <section class="py-5">
+            <h2 id="gallery" class="text-center mb-5">Φωτογραφίες Κλινικής</h2>
+            <div class="full-bleed">
+                {% for item in gallery %}
+                    <figure class="gallery-item-full mb-0 js-reveal">
+                        <img class="gallery-photo-full" src="{{ url_for('static', filename='uploads/' + item.image_filename) }}" alt="{{ '' if item.caption else 'Φωτογραφία κλινικής' }}" loading="lazy">
                         {% if item.caption %}
-                            <figcaption class="card shadow-sm card-body mb-0 text-center">{{ item.caption }}</figcaption>
+                            <figcaption class="gallery-caption">{{ item.caption }}</figcaption>
                         {% endif %}
                     </figure>
-                </div>
+                {% endfor %}
             </div>
-        {% endfor %}
-    </section>
+        </section>
+    {% endif %}
 
-    <section id="contact" class="py-5">
-        <div class="row g-4 align-items-center justify-content-center">
-            <div class="col-12 col-md-5">
-                <h2 class="mb-4">Επικοινωνία</h2>
-                <p class="fs-5 mb-3"><strong>Διεύθυνση:</strong> [Clinic Address]</p>
-                <p class="fs-5 mb-3"><strong>Email:</strong> <a href="mailto:{{ clinic_info.email }}">{{ clinic_info.email }}</a></p>
-                <p class="fs-5 mb-3"><strong>Τηλέφωνο:</strong> <a href="tel:+357{{ clinic_info.phone }}">{{ clinic_info.phone }}</a></p>
-                {% if clinic_info.hours %}
-                    <p class="fs-5 mb-3"><strong>Ωράριο Λειτουργίας:</strong><br><span class="clinic-hours">{{ clinic_info.hours }}</span></p>
-                {% endif %}
-                {% if clinic_info.instagram_url or clinic_info.facebook_url %}
-                    <p class="fs-5 mb-0">
-                        <strong>Ακολουθήστε μας:</strong>
-                        {% if clinic_info.instagram_url %}
-                            <a href="{{ clinic_info.instagram_url }}" target="_blank" rel="noopener">Instagram</a>
-                        {% endif %}
-                        {% if clinic_info.facebook_url %}
-                            <a href="{{ clinic_info.facebook_url }}" target="_blank" rel="noopener">Facebook</a>
-                        {% endif %}
+    <section class="py-5">
+        <h2 id="contact" class="text-center mb-5">Επικοινωνία</h2>
+        <div class="full-bleed">
+            <div class="row g-0 contact-row">
+                <div class="col-12 col-md-6 info-panel">
+                    <p class="fs-5 mb-3"><strong>Διεύθυνση:</strong> [Clinic Address]</p>
+                    <p class="fs-5 mb-3 contact-line">
+                        <img class="contact-icon contact-icon-lg" src="{{ url_for('static', filename='icons/email.svg') }}" alt="Email">
+                        <a href="mailto:{{ clinic_info.email }}">{{ clinic_info.email }}</a>
                     </p>
-                {% endif %}
-            </div>
-            <div class="col-12 col-md-7">
-                <div class="ratio ratio-16x9">
-                    <iframe class="map-embed" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d52175.547594871416!2d33.36433388085512!3d35.18225727708076!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14de1767ca494d55%3A0x5b5ea49c0311c0a5!2sNicosia!5e0!3m2!1sen!2s!4v1784934633847!5m2!1sen!2s" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    <p class="fs-5 mb-3 contact-line">
+                        <img class="contact-icon contact-icon-lg" src="{{ url_for('static', filename='icons/phone.svg') }}" alt="Τηλέφωνο">
+                        <a href="tel:+357{{ clinic_info.phone }}">{{ clinic_info.phone }}</a>
+                    </p>
+                    {% if clinic_info.hours %}
+                        <p class="fs-5 mb-3"><strong>Ωράριο Λειτουργίας:</strong><br><span class="clinic-hours">{{ clinic_info.hours }}</span></p>
+                    {% endif %}
+                    {% if clinic_info.instagram_url or clinic_info.facebook_url %}
+                        <p class="fs-5 mb-0 social-links">
+                            <strong>Ακολουθήστε μας:</strong>
+                            {% if clinic_info.instagram_url %}
+                                <a href="{{ clinic_info.instagram_url }}" target="_blank" rel="noopener">
+                                    <img class="social-icon" src="{{ url_for('static', filename='icons/instagram.svg') }}" alt="Instagram">
+                                </a>
+                            {% endif %}
+                            {% if clinic_info.facebook_url %}
+                                <a href="{{ clinic_info.facebook_url }}" target="_blank" rel="noopener">
+                                    <img class="social-icon" src="{{ url_for('static', filename='icons/facebook.svg') }}" alt="Facebook">
+                                </a>
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="col-12 col-md-6 contact-media">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d52175.547594871416!2d33.36433388085512!3d35.18225727708076!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14de1767ca494d55%3A0x5b5ea49c0311c0a5!2sNicosia!5e0!3m2!1sen!2s!4v1784934633847!5m2!1sen!2s" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="announcements" class="py-5">
-        <h2 class="text-center mb-4">Ανακοινώσεις</h2>
-        {% for announcement in announcements %}
-            <div class="row justify-content-center mb-3 announcement-item js-reveal">
-                <div class="col-12 col-md-8 col-lg-6">
-                    <div class="card shadow-sm border-start border-4">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-1">
-                                <h3 class="h5 mb-0">{{ announcement.title }}</h3>
+    {% if announcements %}
+        <section class="py-5">
+            <h2 id="announcements" class="text-center mb-5">Ανακοινώσεις</h2>
+            {% for announcement in announcements %}
+                <div class="row justify-content-center mb-4 announcement-item js-reveal">
+                    <div class="col-12 col-md-8 col-lg-6">
+                        <div class="announcement-panel">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h3 class="announcement-title mb-0">{{ announcement.title }}</h3>
                                 <span class="text-muted small">{{ announcement.created_at | format_cyprus_datetime }}</span>
                             </div>
                             <p class="mb-0">{{ announcement.body }}</p>
                         </div>
                     </div>
                 </div>
+            {% endfor %}
+            <div class="text-center">
+                <button type="button" id="show-more-announcements" class="btn btn-secondary d-none">Περισσότερες Ανακοινώσεις</button>
             </div>
-        {% endfor %}
-        <div class="text-center">
-            <button type="button" id="show-more-announcements" class="btn btn-secondary d-none">Περισσότερες Ανακοινώσεις</button>
-        </div>
-    </section>
+        </section>
+    {% endif %}
 {% endblock %}
