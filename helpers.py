@@ -176,6 +176,14 @@ def valid_image(file):
     )
 
 
+def has_transparency(image):
+    """Check whether an image actually uses transparency, not just that it has an alpha channel"""
+    if image.mode not in ("RGBA", "LA", "PA") and "transparency" not in image.info:
+        return False
+
+    return image.convert("RGBA").getchannel("A").getextrema()[0] < 255
+
+
 def save_image(file):
     """Validate, process and save an uploaded image returning its new filename, or None if not valid"""
     if not valid_image(file):
@@ -190,6 +198,11 @@ def save_image(file):
 
     image.thumbnail((MAX_IMAGE_DIMENSION, MAX_IMAGE_DIMENSION))
 
+    # Photos are several times smaller as JPEG, so an opaque PNG is re-encoded;
+    # PNG is kept only when the image genuinely uses transparency, like a logo
+    if image_format == "PNG" and not has_transparency(image):
+        image_format = "JPEG"
+
     extension = map_extension(image_format)
 
     # Server-generated filename for more security
@@ -198,8 +211,9 @@ def save_image(file):
     path = os.path.join(UPLOAD_DIR, filename)
 
     if extension == "jpg":
-        # HEIC/MPO aren't supported well on browsers so re-encode them as JPEG
-        image.save(path, format="JPEG")
+        # HEIC/MPO and opaque PNGs are all re-encoded as JPEG, which has no alpha
+        # channel, so anything carrying one has to be flattened first
+        image.convert("RGB").save(path, format="JPEG", quality=85, optimize=True)
     else:
         image.save(path, format=image_format)
 
