@@ -13,7 +13,7 @@ RUN chown appuser:appuser /app
 
 # Install dependencies before copying the rest of the code so editing app code doesn't bust this layer's cache
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip==26.2.1 && pip install --no-cache-dir -r requirements.txt
 
 COPY --chown=appuser:appuser . .
 USER appuser

@@ -39,6 +39,13 @@ jobs:
               if: ${{ !cancelled() && steps.install.outcome == 'success' }}
               run: pylint app.py helpers.py --fail-under=9.0
 
+            - name: Lint the Dockerfile
+              if: '!cancelled()'
+              uses: hadolint/hadolint-action@v3.4.0
+              with:
+                  dockerfile: Dockerfile
+                  failure-threshold: warning
+
             - name: Build Docker image
               id: docker-build
               if: '!cancelled()'
