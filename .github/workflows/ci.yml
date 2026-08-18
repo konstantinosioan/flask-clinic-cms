@@ -1,0 +1,40 @@
+name: Continuous Integration
+
+on: push
+
+jobs:
+    test:
+        name: Run tests and linters
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        timeout-minutes: 10
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v7
+
+            - name: Set up Python
+              uses: actions/setup-python@v7
+              with:
+                  python-version: "3.14"
+                  cache: "pip"
+                  cache-dependency-path: |
+                      requirements.txt
+                      requirements-dev.txt
+
+            - name: Install dependencies
+              id: install
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements-dev.txt
+
+            - name: Run tests
+              run: pytest
+
+            - name: Check formatting with black
+              if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+              run: black --check .
+
+            - name: Lint with pylint
+              if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+              run: pylint app.py helpers.py --fail-under=9.0
