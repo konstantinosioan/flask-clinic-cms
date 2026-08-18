@@ -63,6 +63,29 @@ It includes a public page and an admin dashboard for managing the doctors, servi
 
 The seeded data is placeholder-only (`[Doctor Name]`, `[Clinic Name]`, etc.) — that's expected for local development, not something to fix. See [Placeholder Content](#placeholder-content) below for why.
 
+## Running with Docker
+
+Alternative to steps 2–8 above (the virtual environment/`flask run` part) — you still need to clone the repo first, same as any setup.
+
+1. Build the image:
+   ```
+   docker build -t clinic-cms .
+   ```
+2. Create and seed a local database for the container to use (same steps as [above](#setuplocal-run-instructions), just for Docker):
+   ```
+   sqlite3 clinic.db < schema.sql
+   sqlite3 clinic.db < data.sql
+   ```
+3. Run it, with the database mounted so the container can actually read it:
+   ```
+   docker run -p 127.0.0.1:8000:8000 -v "$(pwd)/clinic.db:/app/clinic.db" clinic-cms
+   ```
+4. Visit `http://127.0.0.1:8000`.
+
+That's enough to see the public page. Two things need more if you want them:
+- **Admin login** — set a real password the same way as [above](#setuplocal-run-instructions), then add `-e SECRET_KEY=your-random-secret-key-here` to the `docker run` command (required for login/flash messages to work at all).
+- **Uploaded photos persisting** — add `-v "$(pwd)/static/uploads:/app/static/uploads"` too. Without it, uploads still work while the container is running, they just disappear once it stops — container filesystems are ephemeral by default.
+
 ## Password Recovery
 
 - **No forgot password flow**: There is no forgot password link or any email-based password reset by design
@@ -91,12 +114,17 @@ flask-clinic-cms/
 ├── data.sql                  # Placeholder-only seed data
 ├── requirements.txt           # Runtime dependencies
 ├── requirements-dev.txt        # Dev dependencies (pytest, pylint, black)
+├── Dockerfile                # Container build instructions
+├── .dockerignore              # Files excluded from the Docker build
 ├── .env                     # SECRET_KEY, etc. -- create locally, git-ignored
+├── .github/
+│   └── workflows/
+│       └── ci.yml             # Runs tests, linters and a Docker build/smoke test on push
 ├── templates/                # Jinja templates
 ├── static/
 │   ├── css/                  # Custom styles
 │   ├── js/                   # Vanilla JS enhancements
-│   ├── icons/                 # Inline SVG icons (email, phone, Instagram, Facebook)
+│   ├── icons/                 # SVG icons (email, phone, Instagram, Facebook)
 │   ├── robots.txt             # Tells crawlers not to index /admin
 │   └── uploads/               # Uploaded photos (git-ignored)
 └── test/                    # pytest test suite

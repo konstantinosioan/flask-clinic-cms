@@ -21,7 +21,7 @@ CREATE TABLE clinic_info (
     instagram_url TEXT,
     facebook_url TEXT,
     hours TEXT,
-    logo_filename TEXT NOT NULL
+    logo_filename TEXT
 );
 
 CREATE TABLE admins (

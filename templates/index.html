@@ -24,7 +24,9 @@
     <section class="text-center py-5 mb-4">
         <h1 class="display-4 fw-bold slide-in clinic-name">[Clinic Name]</h1>
         <p class="lead text-muted">[Welcome Message]</p>
-        <img class="clinic-logo pop-in" src="{{ url_for('static', filename='uploads/' + clinic_info.logo_filename) }}" alt="Λογότυπο Κλινικής">
+        {% if clinic_info.logo_filename %}
+            <img class="clinic-logo pop-in" src="{{ url_for('static', filename='uploads/' + clinic_info.logo_filename) }}" alt="Λογότυπο Κλινικής">
+        {% endif %}
     </section>
 
     {% if doctors %}

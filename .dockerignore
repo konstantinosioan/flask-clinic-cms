@@ -1,0 +1,16 @@
+**/.env
+**/*.db
+**/__pycache__/
+**/*.pyc
+.git/
+static/uploads/
+instance/
+flask_session/
+venv/
+.venv/
+.github/
+Dockerfile
+.dockerignore
+**/.pytest_cache/
+**/.DS_Store
+.vscode/
